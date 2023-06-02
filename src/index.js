@@ -7,6 +7,7 @@ import Home from './pages/Home/Home';
 import ThankYou from './pages/ThankYou/ThankYou';
 import Product from './pages/Product/Product';
 import Profile from './pages/Profile/Profile';
+import Divination from './pages/Divination/Divination';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -19,6 +20,7 @@ root.render(
         <Route path="checkout" element={<Checkout />} />
         <Route path="thankyou" element={<ThankYou />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="divination" element={<Divination />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
