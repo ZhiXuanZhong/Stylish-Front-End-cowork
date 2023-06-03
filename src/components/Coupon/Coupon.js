@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import ReactLoading from 'react-loading';
-import CouponIcon from './coupon-icon.png';
+// import ReactLoading from 'react-loading';
+import dealItem from './img/deal-items.png';
+import fixedAmout from './img/fixed-amout.png';
+import freeShipping from './img/free-shipping.png';
 
 const Wrapper = styled.div`
   height: 80px;
@@ -9,14 +11,21 @@ const Wrapper = styled.div`
   align-items: center;
   border-radius: 24px;
   box-shadow: 6px 6px 2px rgba(0, 0, 0, 0.2);
-  background-color: #FFF;
+  background-color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    border: 4px solid #fc9700;
+  }
   @media screen and (max-width: 1279px) {
   }
 `;
 
 const CouponWrapper = styled.img`
   width: 60px;
-  margin-left: 20px;
+  box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 18px;
+  margin-left: 15px;
 `;
 
 const Description = styled.div`
@@ -30,7 +39,7 @@ const Description = styled.div`
 
 const Discount = styled.div`
   width: 100%;
-  font-size: 20px;
+  font-size: 17px;
 `;
 
 const ExpiredTime = styled.div`
@@ -54,17 +63,30 @@ const GetButton = styled.div`
   cursor: pointer;
 `;
 
-export function Coupon({couponActivated, discountType, discountPrice}) {
+const CouponMappingTable = {
+  dealItem: dealItem,
+  fixedAmout: fixedAmout,
+  freeShipping: freeShipping,
+};
+
+export function Coupon({
+  couponActivated,
+  discountType,
+  discountPrice,
+  expiredTime,
+}) {
   return (
     <Wrapper>
-      <CouponWrapper src={CouponIcon} />
+      <CouponWrapper src={CouponMappingTable[discountType]} />
       <Description>
         <Discount>
-          {discountType === 'cash'
-            ? `現金折${discountPrice}元`
-            : `運費折${discountPrice}元`}
+          {(discountType === 'fixedAmout'
+            ? `現金 `
+            : discountType === 'freeShipping'
+            ? `運費 `
+            : `特定品項 `) + `折${discountPrice}元`}
         </Discount>
-        <ExpiredTime>有效期限 2023.06.18</ExpiredTime>
+        <ExpiredTime>有效期限 {expiredTime}</ExpiredTime>
       </Description>
       <GetButton
         onClick={() => console.log(123)}
