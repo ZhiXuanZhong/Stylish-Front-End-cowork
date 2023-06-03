@@ -36,6 +36,7 @@ const CampaignAd = styled.div`
   height: 380px;
   top: 50%;
   left: 50%;
+  border-radius: 24px;
   transform: translate(-50%, -50%);
   /* display: flex; */
   flex-direction: column;
