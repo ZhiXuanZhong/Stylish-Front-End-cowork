@@ -9,6 +9,7 @@ const Wrapper = styled.div`
   align-items: center;
   border-radius: 24px;
   box-shadow: 6px 6px 2px rgba(0, 0, 0, 0.2);
+  background-color: #FFF;
   @media screen and (max-width: 1279px) {
   }
 `;
