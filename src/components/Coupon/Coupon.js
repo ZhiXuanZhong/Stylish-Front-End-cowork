@@ -3,8 +3,6 @@ import ReactLoading from 'react-loading';
 import CouponIcon from './coupon-icon.png';
 
 const Wrapper = styled.div`
-  /* width: 320px; */
-  width: ${props => props.width};
   height: 80px;
   display: flex;
   justify-content: center;
@@ -21,6 +19,7 @@ const CouponWrapper = styled.img`
 `;
 
 const Description = styled.div`
+  width: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -56,7 +55,7 @@ const GetButton = styled.div`
 
 export function Coupon({couponActivated, discountType, discountPrice}) {
   return (
-    <Wrapper width={couponActivated ? '250px' : '340px'}>
+    <Wrapper>
       <CouponWrapper src={CouponIcon} />
       <Description>
         <Discount>
