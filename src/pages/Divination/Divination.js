@@ -3,6 +3,7 @@ import styled, {css, createGlobalStyle} from 'styled-components';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
+import {Coupon} from '../../components/Coupon/Coupon';
 
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
@@ -78,7 +79,7 @@ const FormBlockTitle = styled.div`
 
 const DropdownSelect = styled.select`
   padding: 4px 60px;
-  background-color: #FFF;
+  background-color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -86,15 +87,13 @@ const DropdownSelect = styled.select`
   border-radius: 999px;
   font-size: 16px;
 
-
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.38 7h12l-6 7-6-7z'/%3E%3Cpath d='M10.37 8.11h-4v-6h4z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat, repeat;
-    background-position: right .7em top 50%, 0 0;
-    background-size: .65em auto, 100%;
-
+  background-repeat: no-repeat, repeat;
+  background-position: right 0.7em top 50%, 0 0;
+  background-size: 0.65em auto, 100%;
 `;
 
 const ColorsBlockTitle = styled.div`
@@ -212,11 +211,13 @@ const StrawsStory = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  line-height: 25px;
 `;
 
-const Coupon = styled.div`
-  background-color: rgba(0, 0, 255, 0.2);
-  outline: 1px solid gray;
+const CouponWrapper = styled.div`
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
   /* FIXME */
   display: flex;
   flex-direction: column;
@@ -224,8 +225,9 @@ const Coupon = styled.div`
   align-items: center;
   width: 100%;
   max-width: 800px;
-  height: 110px;
+  padding: 30px 0 50px;
 `;
+
 const Products = styled.div`
   /* background-color: rgba(0, 0, 255, 0.2);
   outline: 1px solid gray; */
@@ -322,8 +324,8 @@ const Divination = () => {
           </FormBlock>
           <FormBlock>
             <FormBlockTitle>性別</FormBlockTitle>
-            <DropdownSelect  onChange={()=>{}}>
-            {/* FIXME 這邊要綁state */}
+            <DropdownSelect onChange={() => {}}>
+              {/* FIXME 這邊要綁state */}
               <option value="women">我是女生</option>
               <option value="man">我是男生</option>
             </DropdownSelect>
@@ -354,11 +356,9 @@ const Divination = () => {
             福祿自有慶家門
           </StrawsStory>
         </StrawsWrapper>
-        <Coupon>
-          <div>折 $150 元 </div>
-          <div>有效期限: 2023.06.18</div>
-          <div>領取</div>
-        </Coupon>
+        <CouponWrapper>
+          <Coupon discountPrice={150}/>
+        </CouponWrapper>
         <Products>
           {Array.from({length: 6}, (_, index) => {
             return (
