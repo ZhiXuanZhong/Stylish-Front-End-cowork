@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import ReactLoading from 'react-loading';
 import dealItem from './img/deal-items.png';
 import fixedAmout from './img/fixed-amout.png';
 import freeShipping from './img/free-shipping.png';

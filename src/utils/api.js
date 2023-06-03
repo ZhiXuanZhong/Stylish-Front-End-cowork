@@ -1,8 +1,10 @@
 const api = {
   hostname: 'https://api.appworks-school.tw/api/1.0',
+  hostnameByBackend: 'http://54.153.203.119/api/1.0',
+  backendAccessToken: 'x48aDD534da8ADSD1XC4SD5S',
   async getProducts(category, paging) {
     const response = await fetch(
-      `${this.hostname}/products/${category}?paging=${paging}`
+      `${this.hostname}/products/${category}?paging=${paging}`,
     );
     return await response.json();
   },
@@ -12,7 +14,7 @@ const api = {
   },
   async searchProducts(keyword, paging) {
     const response = await fetch(
-      `${this.hostname}/products/search?keyword=${keyword}&paging=${paging}`
+      `${this.hostname}/products/search?keyword=${keyword}&paging=${paging}`,
     );
     return await response.json();
   },
@@ -46,6 +48,15 @@ const api = {
       headers: new Headers({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${jwtToken}`,
+      }),
+    });
+    return await response.json();
+  },
+
+  async getCoupon() {
+    const response = await fetch(`${this.hostnameByBackend}/cart/coupon`, {
+      headers: new Headers({
+        Authorization: `Bearer ${this.backendAccessToken}`,
       }),
     });
     return await response.json();

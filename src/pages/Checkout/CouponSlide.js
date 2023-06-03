@@ -1,5 +1,6 @@
 import Coupon from '../../components/Coupon';
 import styled from 'styled-components';
+import api from '../../utils/api';
 import {useEffect, useState} from 'react';
 
 //// 假資料喔
@@ -28,6 +29,7 @@ const expiredTimes = [
 ];
 
 ////
+
 const Wrapper = styled.div`
   width: 1160px;
   height: 120px;
@@ -96,7 +98,17 @@ const NextBtn = styled.div`
 `;
 
 function CouponSlide() {
+  const [coupons, setCoupons] = useState([]);
   const [slideIdx, setSlideIdx] = useState(0);
+
+  async function getCoupon() {
+    const {data} = await api.getCoupon();
+    setCoupons(data.coupon);
+  }
+
+  useEffect(() => {
+    const data = getCoupon();
+  }, []);
 
   return (
     <Wrapper>
@@ -107,9 +119,10 @@ function CouponSlide() {
         visibility={slideIdx === 0 ? 'hidden' : 'visible'}></PrevBtn>
       <HiddenWrapper>
         <CouponWrapper transform={`translateX(${-500 * slideIdx}px);`}>
-          {[...Array(8)].map((_, idx) => {
+          {coupons.map((_, idx) => {
             return (
               <Coupon
+                key={idx}
                 couponActivated={couponActivated}
                 discountType={discountTypes[idx]}
                 discountPrice={discountPrices[idx]}
