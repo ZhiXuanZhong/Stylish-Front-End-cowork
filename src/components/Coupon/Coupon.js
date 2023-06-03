@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   cursor: pointer;
 
   &:hover {
-    border: 4px solid #fc9700;
+    outline: 4px solid #fc9700;
   }
   @media screen and (max-width: 1279px) {
   }
