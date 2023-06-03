@@ -56,7 +56,7 @@ const ColorsBlockTitle = styled.div`
   text-align: center;
 
   margin: 10px 0;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 30px;
   font-weight: 500;
 `;
@@ -67,7 +67,7 @@ const ColorsBlock = styled.div`
   align-items: center;
   width: 60%;
   height: 100px;
-  margin: 0 auto 15px;
+  margin: 0 auto;
   padding: 0 10px;
 
   background-color: #fafafa;
@@ -83,20 +83,40 @@ const ColorsSquare = styled.div`
 
   margin: 0 5px;
 
-  background-color: #${props => props.$hex};
+  background-color: #${(props) => props.$hex};
   border: 1px solid #fafafa;
 `;
 
-const SendButton = styled.div`
-  background-color: rgba(0, 0, 255, 0.2);
-  outline: 1px solid gray;
+const ButtonArea = styled.div`
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
   /* FIXME */
   width: 100%;
-  height: 80px;
+  height: 100px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const StrawButton = styled.button`
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
+  /* FIXME */
+
+  cursor: pointer;
+	border: none;
+
+  background: #363636;
+  box-shadow: -9px 10px 30px rgba(112, 112, 112, 0.35);
+  border-radius: 85px;
+
+  padding: 10px 50px;
+  
+
+  color: #FFF;
+  font-size: 20px;
+
 `;
 
 const StrawsWrapper = styled.div`
@@ -130,7 +150,7 @@ const StrawsTitle = styled.div`
   justify-content: center;
   align-items: center;
 
-  color: #ED1E1E;
+  color: #ed1e1e;
   font-size: 25px;
 `;
 
@@ -233,6 +253,7 @@ const ProductLink = styled.div`
 
   text-align: center;
   border-radius: 999px;
+  cursor: pointer;
 `;
 
 const Divination = () => {
@@ -249,30 +270,34 @@ const Divination = () => {
             <div>性別</div>
             <input />
           </FormBlock>
-            <ColorsBlockTitle>挑選一個最喜歡的顏色</ColorsBlockTitle>
+          <ColorsBlockTitle>挑選一個最喜歡的顏色</ColorsBlockTitle>
           <ColorsBlock>
             {Array.from({ length: 6 }, (_, index) => {
-              return <ColorsSquare $hex={Math.floor(Math.random()*16777215).toString(16)}/>;
+              return <ColorsSquare $hex={Math.floor(Math.random() * 16777215).toString(16)} />;
             })}
           </ColorsBlock>
-          <SendButton>
-            <button>好手氣！</button>
-          </SendButton>
+          <ButtonArea>
+            <StrawButton onClick={()=> alert('clicked')}>好手氣！</StrawButton>
+          </ButtonArea>
         </FormArea>
         <StrawsWrapper>
           <StrawsTitle>大吉籤</StrawsTitle>
-          <StrawsStory>風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門</StrawsStory>
+          <StrawsStory>
+            風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門
+          </StrawsStory>
         </StrawsWrapper>
         <Coupon>
-            <div>折 $150 元 </div>
-            <div>有效期限: 2023.06.18</div>
-            <div>領取</div>
+          <div>折 $150 元 </div>
+          <div>有效期限: 2023.06.18</div>
+          <div>領取</div>
         </Coupon>
         <Products>
           {Array.from({ length: 6 }, (_, index) => {
             return (
               <Product>
-                <ProductImage src='https://stickershop.line-scdn.net/stickershop/v1/product/4329/LINEStorePC/main.png?v=1' />
+                <ProductImage src="https://stickershop.line-scdn.net/stickershop/v1/product/4329/LINEStorePC/main.png?v=1" />
                 <ProductTitle>休閒西裝</ProductTitle>
                 <ProductPrice>NT.1999</ProductPrice>
                 <ProductLink>用券現折 →</ProductLink>
