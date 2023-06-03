@@ -1,9 +1,20 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, {useState} from 'react';
+import styled, {css, createGlobalStyle} from 'styled-components';
+import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
+
+const DatePickerWrapperStyles = createGlobalStyle`
+.react-date-picker__wrapper {
+background-color: #FFF;
+border-radius: 999px;
+padding: 0 30px;
+border: none;
+}
+`;
 
 const Wrapper = styled.div`
   max-width: 960px;
-  min-height: 600px;
   margin: 20px auto;
   /* padding: 65px 0 49px; */
   display: flex;
@@ -21,12 +32,14 @@ const Wrapper = styled.div`
 const CampaignTitle = styled.div`
   padding: 25px 0;
   font-weight: 700;
-  font-size: 40px;
+  font-size: 60px;
   line-height: 45px;
   letter-spacing: 30px;
   color: #313538;
 
   text-align: center;
+  margin-right: -30px;
+  padding: 40px 0 50px;
 `;
 
 const FormArea = styled.div`
@@ -35,17 +48,53 @@ const FormArea = styled.div`
   /* FIXME */
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
   max-width: 800px;
   /* height: 300px; */
 `;
 
 const FormBlock = styled.div`
-  background-color: rgba(0, 0, 255, 0.2);
-  outline: 1px solid gray;
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
   /* FIXME */
-  width: 50%;
+  width: 250px;
   height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const FormBlockTitle = styled.div`
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
+  /* FIXME */
+  margin-bottom: 10px;
+
+  color: #ffffff;
+  font-size: 30px;
+  font-weight: 500;
+`;
+
+const DropdownSelect = styled.select`
+  padding: 4px 60px;
+  background-color: #FFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  border-radius: 999px;
+  font-size: 16px;
+
+
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.38 7h12l-6 7-6-7z'/%3E%3Cpath d='M10.37 8.11h-4v-6h4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100%;
+
 `;
 
 const ColorsBlockTitle = styled.div`
@@ -83,7 +132,7 @@ const ColorsSquare = styled.div`
 
   margin: 0 5px;
 
-  background-color: #${(props) => props.$hex};
+  background-color: #${props => props.$hex};
   border: 1px solid #fafafa;
 `;
 
@@ -92,7 +141,6 @@ const ButtonArea = styled.div`
   outline: 1px solid gray; */
   /* FIXME */
   width: 100%;
-  height: 100px;
 
   display: flex;
   justify-content: center;
@@ -105,18 +153,17 @@ const StrawButton = styled.button`
   /* FIXME */
 
   cursor: pointer;
-	border: none;
+  border: none;
 
   background: #363636;
   box-shadow: -9px 10px 30px rgba(112, 112, 112, 0.35);
   border-radius: 85px;
 
   padding: 10px 50px;
-  
+  margin: 40px 0;
 
-  color: #FFF;
+  color: #fff;
   font-size: 20px;
-
 `;
 
 const StrawsWrapper = styled.div`
@@ -257,34 +304,53 @@ const ProductLink = styled.div`
 `;
 
 const Divination = () => {
+  const [value, onChange] = useState(new Date());
+
   return (
     <>
       <Wrapper>
         <CampaignTitle>抽出好運勢</CampaignTitle>
         <FormArea>
           <FormBlock>
-            <div>生日</div>
-            <input />
+            <FormBlockTitle>生日</FormBlockTitle>
+            <DatePicker
+              onChange={onChange}
+              value={value}
+              maxDate={new Date()}
+            />
+            <DatePickerWrapperStyles />
           </FormBlock>
           <FormBlock>
-            <div>性別</div>
-            <input />
+            <FormBlockTitle>性別</FormBlockTitle>
+            <DropdownSelect  onChange={()=>{}}>
+            {/* FIXME 這邊要綁state */}
+              <option value="women">我是女生</option>
+              <option value="man">我是男生</option>
+            </DropdownSelect>
           </FormBlock>
-          <ColorsBlockTitle>挑選一個最喜歡的顏色</ColorsBlockTitle>
+          <ColorsBlockTitle>選一個最喜歡的顏色</ColorsBlockTitle>
           <ColorsBlock>
-            {Array.from({ length: 6 }, (_, index) => {
-              return <ColorsSquare $hex={Math.floor(Math.random() * 16777215).toString(16)} />;
+            {Array.from({length: 6}, (_, index) => {
+              return (
+                <ColorsSquare
+                  $hex={Math.floor(Math.random() * 16777215).toString(16)}
+                />
+              );
             })}
           </ColorsBlock>
           <ButtonArea>
-            <StrawButton onClick={()=> alert('clicked')}>好手氣！</StrawButton>
+            <StrawButton onClick={() => alert('clicked')}>好手氣！</StrawButton>
           </ButtonArea>
         </FormArea>
         <StrawsWrapper>
           <StrawsTitle>大吉籤</StrawsTitle>
           <StrawsStory>
-            風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮 福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
+            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
             福祿自有慶家門
           </StrawsStory>
         </StrawsWrapper>
@@ -294,7 +360,7 @@ const Divination = () => {
           <div>領取</div>
         </Coupon>
         <Products>
-          {Array.from({ length: 6 }, (_, index) => {
+          {Array.from({length: 6}, (_, index) => {
             return (
               <Product>
                 <ProductImage src="https://stickershop.line-scdn.net/stickershop/v1/product/4329/LINEStorePC/main.png?v=1" />
