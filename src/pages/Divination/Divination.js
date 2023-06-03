@@ -5,6 +5,8 @@ import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
 
+import api from '../../utils/api';
+
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
 background-color: #FFF;
@@ -305,8 +307,48 @@ const ProductLink = styled.div`
   cursor: pointer;
 `;
 
+const StrawResult = ({strawData}) => {
+  return (
+    <>
+      <StrawsWrapper>
+        <StrawsTitle>{strawData.straws_story.type}</StrawsTitle>
+        <StrawsStory>{strawData.straws_story.story}</StrawsStory>
+      </StrawsWrapper>
+      <CouponWrapper>
+        <Coupon discountPrice={150} discountType={'fixedAmout'} />
+      </CouponWrapper>
+      <Products>
+        {strawData.products.map((item, index) => {
+          return (
+            <Product key={index}>
+              <ProductImage src={item.main_image} />
+              <ProductTitle>{item.title}</ProductTitle>
+              <ProductPrice>NT.{item.price}</ProductPrice>
+              {/* FIXME link */}
+              <ProductLink>用券現折 →</ProductLink>
+            </Product>
+          );
+        })}
+      </Products>
+    </>
+  );
+};
+
 const Divination = () => {
-  const [value, onChange] = useState(new Date());
+  const [birthday, setBirthday] = useState(new Date());
+  const [strawData, setStrawData] = useState();
+
+  // useState > complex state OBJ
+
+  async function getStraw() {
+    if (strawData) {
+      alert('你抽過了！好了就好了～！');
+    } else {
+      const {data} = await api.getStraw();
+      setStrawData(data);
+      console.log(data);
+    }
+  }
 
   return (
     <>
@@ -316,8 +358,8 @@ const Divination = () => {
           <FormBlock>
             <FormBlockTitle>生日</FormBlockTitle>
             <DatePicker
-              onChange={onChange}
-              value={value}
+              onChange={setBirthday}
+              value={birthday}
               maxDate={new Date()}
             />
             <DatePickerWrapperStyles />
@@ -341,36 +383,10 @@ const Divination = () => {
             })}
           </ColorsBlock>
           <ButtonArea>
-            <StrawButton onClick={() => alert('clicked')}>好手氣！</StrawButton>
+            <StrawButton onClick={() => getStraw()}>好手氣！</StrawButton>
           </ButtonArea>
         </FormArea>
-        <StrawsWrapper>
-          <StrawsTitle>大吉籤</StrawsTitle>
-          <StrawsStory>
-            風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門
-          </StrawsStory>
-        </StrawsWrapper>
-        <CouponWrapper>
-          <Coupon discountPrice={150}/>
-        </CouponWrapper>
-        <Products>
-          {Array.from({length: 6}, (_, index) => {
-            return (
-              <Product>
-                <ProductImage src="https://stickershop.line-scdn.net/stickershop/v1/product/4329/LINEStorePC/main.png?v=1" />
-                <ProductTitle>休閒西裝</ProductTitle>
-                <ProductPrice>NT.1999</ProductPrice>
-                <ProductLink>用券現折 →</ProductLink>
-              </Product>
-            );
-          })}
-        </Products>
+        {strawData && <StrawResult strawData={strawData} />}
       </Wrapper>
     </>
   );
