@@ -1,6 +1,5 @@
 const api = {
-  hostname: 'https://api.appworks-school.tw/api/1.0',
-  hostnameByBackend: 'http://54.153.203.119/api/1.0',
+  hostname: 'https://hyperushle.com/api',
   backendAccessToken: 'x48aDD534da8ADSD1XC4SD5S',
   async getProducts(category, paging) {
     const response = await fetch(
@@ -54,16 +53,19 @@ const api = {
   },
 
   async getCoupon() {
-    const response = await fetch(`${this.hostnameByBackend}/cart/coupon`, {
+    const response = await fetch(`${this.hostname}/cart/coupon`, {
       headers: new Headers({
         Authorization: `Bearer ${this.backendAccessToken}`,
       }),
     });
     return await response.json();
   },
-  async getStraw() {
-    const response = await fetch(`${this.hostnameByBackend}/front/divination`, { 
+  async getStraw(data) {
+    console.log(data);
+    const response = await fetch(`${this.hostname}/front/divination`, {
+      body: JSON.stringify(data), 
       headers: new Headers({
+        'Content-Type': 'application/json',
       }),
       method: "POST",
     });
