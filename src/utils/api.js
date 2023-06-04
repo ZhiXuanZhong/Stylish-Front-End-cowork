@@ -62,7 +62,7 @@ const api = {
     return await response.json();
   },
   async getStraw() {
-    const response = await fetch("http://54.153.203.119/api/1.0/front/divination", { 
+    const response = await fetch(`${this.hostnameByBackend}/front/divination`, { 
       headers: new Headers({
       }),
       method: "POST",

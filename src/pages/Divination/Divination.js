@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import styled, {css, createGlobalStyle} from 'styled-components';
+import styled, {createGlobalStyle} from 'styled-components';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
+import draw from '../Home/draw.gif';
 
 import api from '../../utils/api';
 
@@ -134,7 +135,8 @@ const ColorsSquare = styled.div`
   margin: 0 5px;
 
   background-color: #${props => props.$hex};
-  border: 1px solid #fafafa;
+  border: 1px solid #ebebeb;
+  ${props => (props.$isPick ? 'outline: 2px solid #888' : null)}
 `;
 
 const ButtonArea = styled.div`
@@ -307,6 +309,10 @@ const ProductLink = styled.div`
   cursor: pointer;
 `;
 
+const LuckyDraw = styled.img`
+  object-fit: cover;
+`;
+
 const StrawResult = ({strawData}) => {
   return (
     <>
@@ -338,6 +344,8 @@ const Divination = () => {
   const [birthday, setBirthday] = useState(new Date());
   const [strawData, setStrawData] = useState();
 
+  const colors = ['DDF0FF','FFFFFF','CCCCCC','DDFFBB','334455']
+
   // useState > complex state OBJ
 
   async function getStraw() {
@@ -354,6 +362,7 @@ const Divination = () => {
     <>
       <Wrapper>
         <CampaignTitle>抽出好運勢</CampaignTitle>
+        <LuckyDraw src={draw} />
         <FormArea>
           <FormBlock>
             <FormBlockTitle>生日</FormBlockTitle>
@@ -370,17 +379,12 @@ const Divination = () => {
               {/* FIXME 這邊要綁state */}
               <option value="women">我是女生</option>
               <option value="man">我是男生</option>
+              <option value="unisex">是個秘密</option>
             </DropdownSelect>
           </FormBlock>
           <ColorsBlockTitle>選一個最喜歡的顏色</ColorsBlockTitle>
           <ColorsBlock>
-            {Array.from({length: 6}, (_, index) => {
-              return (
-                <ColorsSquare
-                  $hex={Math.floor(Math.random() * 16777215).toString(16)}
-                />
-              );
-            })}
+            {colors.map((color,index) => <ColorsSquare $hex={color} key={index}/>)}
           </ColorsBlock>
           <ButtonArea>
             <StrawButton onClick={() => getStraw()}>好手氣！</StrawButton>
