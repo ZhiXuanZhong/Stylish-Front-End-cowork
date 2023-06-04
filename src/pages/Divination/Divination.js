@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -7,6 +8,226 @@ import {Coupon} from '../../components/Coupon/Coupon';
 import draw from '../Home/draw.gif';
 
 import api from '../../utils/api';
+
+
+
+const Divination = () => {
+  const colors = [
+    {
+      hex: '#DDF0FF',
+      selected: true,
+    },
+    {
+      hex: '#FFFFFF',
+      selected: false,
+    },
+    {
+      hex: '#CCCCCC',
+      selected: false,
+    },
+    {
+      hex: '#DDFFBB',
+      selected: false,
+    },
+    {
+      hex: '#334455',
+      selected: false,
+    },
+  ];
+
+  const userInputMock = {
+    birthday: null,
+    sign: 'Leo',
+    gender: 'unisex',
+    color: '#CCCCCC', // Hex code
+  };
+
+  const [birthday, setBirthday] = useState(userInputMock.birthday);
+  const [gender, setGender] = useState('women');
+  const [selectedColor, setSelectColor] = useState(colors);
+  const [zodiac, setZodiac] = useState();
+  const [strawData, setStrawData] = useState();
+
+  async function getStraw() {
+    if (strawData) {
+      alert('你抽過了！好了就好了～！');
+    } else {
+      const {data} = await api.getStraw();
+      setStrawData(data);
+      console.log(data);
+    }
+  }
+
+  const handlePickColor = index => {
+    const nowIndex = selectedColor.map(e => e.selected).indexOf(true);
+    const newColors = [...selectedColor];
+    newColors[nowIndex].selected = false;
+    newColors[index].selected = true;
+    setSelectColor(newColors);
+  };
+
+  const handleDatePick = date => {
+    setBirthday(date);
+    getZodiacSign(date);
+  };
+
+   function convertDate  (date){
+    return date.toISOString().slice(0, 10)
+  }
+
+  const handleStrawSubmit = async() => {
+
+    if(!birthday){
+      return alert('生日生日～ 要記得填呦！')
+    }
+
+    if (strawData) {
+      alert('你抽過了！好了就好了～！');
+    } else {
+
+      const answer = {
+        data: {
+          birthday: convertDate(birthday),
+          sign: zodiac.sign,
+          gender: gender,
+          color: selectedColor.filter(item => item.selected === true)[0].hex,
+        },
+      };
+
+      const {data} = await api.getStraw(answer);
+      setStrawData(data);
+      console.log(data);
+    }
+
+  };
+
+  const getZodiacSign = dateString => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    if (!dateString) {
+      setZodiac();
+      return;
+    }
+
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+      setZodiac({name: '水瓶座', sign: 'Aquarius'});
+      return;
+    } else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) {
+      setZodiac({name: '雙魚座', sign: 'Pisces'});
+      return;
+    } else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
+      setZodiac({name: '牡羊座', sign: 'Aries'});
+      return;
+    } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
+      setZodiac({name: '金牛座', sign: 'Taurus'});
+      return;
+    } else if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) {
+      setZodiac({name: '雙子座', sign: 'Gemini'});
+      return;
+    } else if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) {
+      setZodiac({name: '巨蟹座', sign: 'Cancer'});
+      return;
+    } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
+      setZodiac({name: '獅子座', sign: 'Leo'});
+      return;
+    } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
+      setZodiac({name: '處女座', sign: 'Virgo'});
+      return;
+    } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
+      setZodiac({name: '天秤座', sign: 'Libra'});
+      return;
+    } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
+      setZodiac({name: '天蠍座', sign: 'Scorpio'});
+      return;
+    } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
+      setZodiac({name: '射手座', sign: 'Sagittarius'});
+      return;
+    } else {
+      setZodiac({name: '摩羯座', sign: 'Capricorn'});
+      return;
+    }
+  };
+
+  return (
+    <>
+      <Wrapper>
+        <CampaignTitle>抽出好運勢</CampaignTitle>
+        <LuckyDraw src={draw} />
+        <FormArea>
+          <FormBlock>
+            <FormBlockTitle>生日</FormBlockTitle>
+            <DatePicker
+              onChange={handleDatePick}
+              value={birthday}
+              maxDate={new Date()}
+              format="yyyy-MM-dd"
+              locale="zh-TW"
+            />
+            <DatePickerWrapperStyles />
+          </FormBlock>
+          <FormBlock>
+            <FormBlockTitle>性別</FormBlockTitle>
+            <DropdownSelect
+              onChange={e => setGender(e.target.value)}
+              value={gender}>
+              <option value={'women'}>我是女生</option>
+              <option value={'man'}>我是男生</option>
+              <option value={'unisex'}>是個秘密</option>
+            </DropdownSelect>
+          </FormBlock>
+          <ZodiacTitle>{zodiac && zodiac.name + '的幸運星'}</ZodiacTitle>
+          <ColorsBlockTitle>選一個喜歡的顏色吧！</ColorsBlockTitle>
+          <ColorsBlock>
+            {selectedColor.map((color, index) => (
+              <ColorsSquare
+                $hex={color.hex}
+                key={index}
+                $isPick={color.selected}
+                onClick={() => handlePickColor(index)}
+              />
+            ))}
+          </ColorsBlock>
+          <ButtonArea>
+            <StrawButton onClick={handleStrawSubmit}>好手氣！</StrawButton>
+          </ButtonArea>
+        </FormArea>
+        {strawData && <StrawResult strawData={strawData} />}
+      </Wrapper>
+    </>
+  );
+};
+
+export default Divination;
+
+
+const StrawResult = ({strawData}) => {
+  return (
+    <>
+      <StrawsWrapper>
+        <StrawsTitle>{strawData.straws_story.type}</StrawsTitle>
+        <StrawsStory>{strawData.straws_story.story}</StrawsStory>
+      </StrawsWrapper>
+      <CouponWrapper>
+        <Coupon discountPrice={strawData.discount} discountType={'fixedAmout'} expiredTime={strawData.valid_date.slice(0,10)}/>
+      </CouponWrapper>
+      <Products>
+        {strawData.products.map((item, index) => {
+          return (
+            <Product key={index}>
+              <ProductImage src={item.main_image} />
+              <ProductTitle>{item.title}</ProductTitle>
+              <ProductPrice>NT.{item.price}</ProductPrice>
+              {/* FIXME link */}
+              <ProductLink to={`/products/${item.id}`}>用券現折 →</ProductLink>
+            </Product>
+          );
+        })}
+      </Products>
+    </>
+  );
+};
 
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
@@ -146,7 +367,7 @@ const ColorsSquare = styled.div`
 
   margin: 0 5px;
 
-  background-color: #${props => props.$hex};
+  background-color: ${props => props.$hex};
   border: 1px solid #ebebeb;
   ${props => (props.$isPick ? 'outline: 2px solid #888' : null)}
 `;
@@ -305,7 +526,7 @@ const ProductPrice = styled.div`
   /* padding: 3px; */
 `;
 
-const ProductLink = styled.div`
+const ProductLink = styled(Link)`
   /* background-color: rgba(0, 0, 255, 0.2);
   outline: 1px solid gray; */
   /* FIXME */
@@ -324,189 +545,3 @@ const ProductLink = styled.div`
 const LuckyDraw = styled.img`
   object-fit: cover;
 `;
-
-const StrawResult = ({strawData}) => {
-  return (
-    <>
-      <StrawsWrapper>
-        <StrawsTitle>{strawData.straws_story.type}</StrawsTitle>
-        <StrawsStory>{strawData.straws_story.story}</StrawsStory>
-      </StrawsWrapper>
-      <CouponWrapper>
-        <Coupon discountPrice={150} discountType={'fixedAmout'} />
-      </CouponWrapper>
-      <Products>
-        {strawData.products.map((item, index) => {
-          return (
-            <Product key={index}>
-              <ProductImage src={item.main_image} />
-              <ProductTitle>{item.title}</ProductTitle>
-              <ProductPrice>NT.{item.price}</ProductPrice>
-              {/* FIXME link */}
-              <ProductLink>用券現折 →</ProductLink>
-            </Product>
-          );
-        })}
-      </Products>
-    </>
-  );
-};
-
-const Divination = () => {
-  const colors = [
-    {
-      hex: 'DDF0FF',
-      selected: true,
-    },
-    {
-      hex: 'FFFFFF',
-      selected: false,
-    },
-    {
-      hex: 'CCCCCC',
-      selected: false,
-    },
-    {
-      hex: 'DDFFBB',
-      selected: false,
-    },
-    {
-      hex: '334455',
-      selected: false,
-    },
-  ];
-
-  const userInputMock = {
-    birthday: null,
-    sign: 'Leo',
-    gender: 'unisex',
-    color: 'CCCCCC', // Hex code
-  };
-
-  const [birthday, setBirthday] = useState(userInputMock.birthday);
-  const [gender, setGender] = useState('women');
-  const [selectedColor, setSelectColor] = useState(colors);
-  const [zodiac, setZodiac] = useState();
-  const [strawData, setStrawData] = useState();
-
-  async function getStraw() {
-    if (strawData) {
-      alert('你抽過了！好了就好了～！');
-    } else {
-      const {data} = await api.getStraw();
-      setStrawData(data);
-      console.log(data);
-    }
-  }
-
-  const handlePickColor = index => {
-    const nowIndex = selectedColor.map(e => e.selected).indexOf(true);
-    const newColors = [...selectedColor];
-    newColors[nowIndex].selected = false;
-    newColors[index].selected = true;
-    setSelectColor(newColors);
-  };
-
-  const handleDatePick = date => {
-    setBirthday(date);
-    getZodiacSign(date);
-  };
-
-  const getZodiacSign = dateString => {
-    const date = new Date(dateString);
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    if (!dateString) {
-      setZodiac();
-      return;
-    }
-
-    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
-      setZodiac({name: '水瓶座', sign: 'Aquarius'});
-      return;
-    } else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) {
-      setZodiac({name: '雙魚座', sign: 'Pisces'});
-      return;
-    } else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
-      setZodiac({name: '牡羊座', sign: 'Aries'});
-      return;
-    } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
-      setZodiac({name: '金牛座', sign: 'Taurus'});
-      return;
-    } else if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) {
-      setZodiac({name: '雙子座', sign: 'Gemini'});
-      return;
-    } else if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) {
-      setZodiac({name: '巨蟹座', sign: 'Cancer'});
-      return;
-    } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
-      setZodiac({name: '獅子座', sign: 'Leo'});
-      return;
-    } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
-      setZodiac({name: '處女座', sign: 'Virgo'});
-      return;
-    } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
-      setZodiac({name: '天秤座', sign: 'Libra'});
-      return;
-    } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
-      setZodiac({name: '天蠍座', sign: 'Scorpio'});
-      return;
-    } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
-      setZodiac({name: '射手座', sign: 'Sagittarius'});
-      return;
-    } else {
-      setZodiac({name: '摩羯座', sign: 'Capricorn'});
-      return;
-    }
-  };
-
-  return (
-    <>
-      <Wrapper>
-        <CampaignTitle>抽出好運勢</CampaignTitle>
-        <LuckyDraw src={draw} />
-        <FormArea>
-          <FormBlock>
-            <FormBlockTitle>生日</FormBlockTitle>
-            <DatePicker
-              onChange={handleDatePick}
-              value={birthday}
-              maxDate={new Date()}
-              locale="zh-TW"
-            />
-            <DatePickerWrapperStyles />
-          </FormBlock>
-          <FormBlock>
-            <FormBlockTitle>性別</FormBlockTitle>
-            <DropdownSelect
-              onChange={e => setGender(e.target.value)}
-              value={gender}>
-              <option value={'women'}>我是女生</option>
-              <option value={'man'}>我是男生</option>
-              <option value={'unisex'}>是個秘密</option>
-            </DropdownSelect>
-          </FormBlock>
-          <ZodiacTitle>{zodiac && zodiac.name + '的幸運星'}</ZodiacTitle>
-          <ColorsBlockTitle>選一個喜歡的顏色吧！</ColorsBlockTitle>
-          <ColorsBlock>
-            {selectedColor.map((color, index) => (
-              <ColorsSquare
-                $hex={color.hex}
-                key={index}
-                $isPick={color.selected}
-                onClick={() => handlePickColor(index)}
-              />
-            ))}
-          </ColorsBlock>
-          <ButtonArea>
-            <StrawButton onClick={() => getStraw()}>好手氣！</StrawButton>
-          </ButtonArea>
-        </FormArea>
-        {strawData && <StrawResult strawData={strawData} />}
-      </Wrapper>
-    </>
-  );
-};
-
-export default Divination;
