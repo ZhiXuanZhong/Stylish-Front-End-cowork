@@ -1,9 +1,13 @@
 import React, {useState} from 'react';
-import styled, {css, createGlobalStyle} from 'styled-components';
-import DatePicker from 'react-date-picker';
+import styled, {createGlobalStyle} from 'styled-components';
+import {DatePicker,registerLocale, setDefaultLocale} from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
+import draw from '../Home/draw.gif';
+
+import api from '../../utils/api';
+
 
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
@@ -90,7 +94,7 @@ const DropdownSelect = styled.select`
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.38 7h12l-6 7-6-7z'/%3E%3Cpath d='M10.37 8.11h-4v-6h4z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg height='800px' width='800px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 32 32' xml:space='preserve'%3E%3Cg%3E%3Cg id='arrow_x5F_down'%3E%3Cpath style='fill:%23030104;' d='M32,16.016l-5.672-5.664c0,0-3.18,3.18-6.312,6.312V0h-8.023v16.664l-6.32-6.32L0,16.016L16,32 L32,16.016z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-repeat: no-repeat, repeat;
   background-position: right 0.7em top 50%, 0 0;
   background-size: 0.65em auto, 100%;
@@ -132,7 +136,8 @@ const ColorsSquare = styled.div`
   margin: 0 5px;
 
   background-color: #${props => props.$hex};
-  border: 1px solid #fafafa;
+  border: 1px solid #ebebeb;
+  ${props => (props.$isPick ? 'outline: 2px solid #888' : null)}
 `;
 
 const ButtonArea = styled.div`
@@ -305,72 +310,127 @@ const ProductLink = styled.div`
   cursor: pointer;
 `;
 
+const LuckyDraw = styled.img`
+  object-fit: cover;
+`;
+
+const StrawResult = ({strawData}) => {
+  return (
+    <>
+      <StrawsWrapper>
+        <StrawsTitle>{strawData.straws_story.type}</StrawsTitle>
+        <StrawsStory>{strawData.straws_story.story}</StrawsStory>
+      </StrawsWrapper>
+      <CouponWrapper>
+        <Coupon discountPrice={150} discountType={'fixedAmout'} />
+      </CouponWrapper>
+      <Products>
+        {strawData.products.map((item, index) => {
+          return (
+            <Product key={index}>
+              <ProductImage src={item.main_image} />
+              <ProductTitle>{item.title}</ProductTitle>
+              <ProductPrice>NT.{item.price}</ProductPrice>
+              {/* FIXME link */}
+              <ProductLink>用券現折 →</ProductLink>
+            </Product>
+          );
+        })}
+      </Products>
+    </>
+  );
+};
+
 const Divination = () => {
-  const [value, onChange] = useState(new Date());
+  const colors = [
+    {
+      hex: 'DDF0FF',
+      selected: true,
+    },
+    {
+      hex: 'FFFFFF',
+      selected: false,
+    },
+    {
+      hex: 'CCCCCC',
+      selected: false,
+    },
+    {
+      hex: 'DDFFBB',
+      selected: false,
+    },
+    {
+      hex: '334455',
+      selected: false
+    },
+  ];
+
+  const userInputMock = {
+    birthday: '1990-07-23',
+    sign: 'Leo',
+    gender: 'unisex',
+    color: 'CCCCCC', // Hex code
+  };
+
+  const [birthday, setBirthday] = useState(new Date(userInputMock.birthday));
+  const [gender, setGender] = useState('women');
+  const [selectedColor, setSelectColor] = useState(colors);
+  const [strawData, setStrawData] = useState();
+
+  async function getStraw() {
+    if (strawData) {
+      alert('你抽過了！好了就好了～！');
+    } else {
+      const {data} = await api.getStraw();
+      setStrawData(data);
+      console.log(data);
+    }
+  }
+
+  const handlePickColor = (index) =>{
+    const nowIndex = selectedColor.map(e => e.selected).indexOf(true)
+    const newColors = [...selectedColor]
+    newColors[nowIndex].selected = false
+    newColors[index].selected = true
+    setSelectColor(newColors)
+  }
 
   return (
     <>
       <Wrapper>
         <CampaignTitle>抽出好運勢</CampaignTitle>
+        <LuckyDraw src={draw} />
         <FormArea>
           <FormBlock>
             <FormBlockTitle>生日</FormBlockTitle>
             <DatePicker
-              onChange={onChange}
-              value={value}
+              onChange={setBirthday}
+              value={birthday}
               maxDate={new Date()}
             />
             <DatePickerWrapperStyles />
           </FormBlock>
           <FormBlock>
             <FormBlockTitle>性別</FormBlockTitle>
-            <DropdownSelect onChange={() => {}}>
-              {/* FIXME 這邊要綁state */}
-              <option value="women">我是女生</option>
-              <option value="man">我是男生</option>
+            <DropdownSelect
+              onChange={e => setGender(e.target.value)}
+              value={gender}>
+              <option value={'women'}>我是女生</option>
+              <option value={'man'}>我是男生</option>
+              <option value={'unisex'}>是個秘密</option>
             </DropdownSelect>
           </FormBlock>
           <ColorsBlockTitle>選一個最喜歡的顏色</ColorsBlockTitle>
           <ColorsBlock>
-            {Array.from({length: 6}, (_, index) => {
-              return (
-                <ColorsSquare
-                  $hex={Math.floor(Math.random() * 16777215).toString(16)}
-                />
-              );
-            })}
+            {selectedColor.map((color, index) => (
+              <ColorsSquare $hex={color.hex} key={index} $isPick={color.selected} onClick={()=>handlePickColor(index)}/>
+            ))}
           </ColorsBlock>
           <ButtonArea>
-            <StrawButton onClick={() => alert('clicked')}>好手氣！</StrawButton>
+            <StrawButton onClick={() => getStraw()}>好手氣！</StrawButton>
           </ButtonArea>
         </FormArea>
-        <StrawsWrapper>
-          <StrawsTitle>大吉籤</StrawsTitle>
-          <StrawsStory>
-            風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門風恬浪靜可行舟 恰是中秋月一輪,凡事不須多憂慮
-            福祿自有慶家門
-          </StrawsStory>
-        </StrawsWrapper>
-        <CouponWrapper>
-          <Coupon discountPrice={150}/>
-        </CouponWrapper>
-        <Products>
-          {Array.from({length: 6}, (_, index) => {
-            return (
-              <Product>
-                <ProductImage src="https://stickershop.line-scdn.net/stickershop/v1/product/4329/LINEStorePC/main.png?v=1" />
-                <ProductTitle>休閒西裝</ProductTitle>
-                <ProductPrice>NT.1999</ProductPrice>
-                <ProductLink>用券現折 →</ProductLink>
-              </Product>
-            );
-          })}
-        </Products>
+        {strawData && <StrawResult strawData={strawData} />}
       </Wrapper>
     </>
   );

@@ -61,6 +61,14 @@ const api = {
     });
     return await response.json();
   },
+  async getStraw() {
+    const response = await fetch(`${this.hostnameByBackend}/front/divination`, { 
+      headers: new Headers({
+      }),
+      method: "POST",
+    });
+    return await response.json()
+  }
 };
 
 export default api;
