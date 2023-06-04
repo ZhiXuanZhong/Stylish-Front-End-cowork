@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
-import {DatePicker,registerLocale, setDefaultLocale} from 'react-date-picker';
+import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
 import draw from '../Home/draw.gif';
 
 import api from '../../utils/api';
-
 
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
@@ -111,6 +110,18 @@ const ColorsBlockTitle = styled.div`
   color: #ffffff;
   font-size: 30px;
   font-weight: 500;
+`;
+
+const ZodiacTitle = styled.div`
+  /* background-color: rgba(0, 0, 255, 0.2);
+  outline: 1px solid gray; */
+  /* FIXME */
+
+  flex-basis: 100%;
+  font-size: 30px;
+  font-weight: 400;
+  text-align: center;
+  color: #ffffff;
 `;
 
 const ColorsBlock = styled.div`
@@ -361,20 +372,21 @@ const Divination = () => {
     },
     {
       hex: '334455',
-      selected: false
+      selected: false,
     },
   ];
 
   const userInputMock = {
-    birthday: '1990-07-23',
+    birthday: null,
     sign: 'Leo',
     gender: 'unisex',
     color: 'CCCCCC', // Hex code
   };
 
-  const [birthday, setBirthday] = useState(new Date(userInputMock.birthday));
+  const [birthday, setBirthday] = useState(userInputMock.birthday);
   const [gender, setGender] = useState('women');
   const [selectedColor, setSelectColor] = useState(colors);
+  const [zodiac, setZodiac] = useState();
   const [strawData, setStrawData] = useState();
 
   async function getStraw() {
@@ -387,13 +399,67 @@ const Divination = () => {
     }
   }
 
-  const handlePickColor = (index) =>{
-    const nowIndex = selectedColor.map(e => e.selected).indexOf(true)
-    const newColors = [...selectedColor]
-    newColors[nowIndex].selected = false
-    newColors[index].selected = true
-    setSelectColor(newColors)
-  }
+  const handlePickColor = index => {
+    const nowIndex = selectedColor.map(e => e.selected).indexOf(true);
+    const newColors = [...selectedColor];
+    newColors[nowIndex].selected = false;
+    newColors[index].selected = true;
+    setSelectColor(newColors);
+  };
+
+  const handleDatePick = date => {
+    setBirthday(date);
+    getZodiacSign(date);
+  };
+
+  const getZodiacSign = dateString => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    if (!dateString) {
+      setZodiac();
+      return;
+    }
+
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+      setZodiac({name: '水瓶座', sign: 'Aquarius'});
+      return;
+    } else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) {
+      setZodiac({name: '雙魚座', sign: 'Pisces'});
+      return;
+    } else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
+      setZodiac({name: '牡羊座', sign: 'Aries'});
+      return;
+    } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
+      setZodiac({name: '金牛座', sign: 'Taurus'});
+      return;
+    } else if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) {
+      setZodiac({name: '雙子座', sign: 'Gemini'});
+      return;
+    } else if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) {
+      setZodiac({name: '巨蟹座', sign: 'Cancer'});
+      return;
+    } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
+      setZodiac({name: '獅子座', sign: 'Leo'});
+      return;
+    } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
+      setZodiac({name: '處女座', sign: 'Virgo'});
+      return;
+    } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
+      setZodiac({name: '天秤座', sign: 'Libra'});
+      return;
+    } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
+      setZodiac({name: '天蠍座', sign: 'Scorpio'});
+      return;
+    } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
+      setZodiac({name: '射手座', sign: 'Sagittarius'});
+      return;
+    } else {
+      setZodiac({name: '摩羯座', sign: 'Capricorn'});
+      return;
+    }
+  };
 
   return (
     <>
@@ -404,9 +470,10 @@ const Divination = () => {
           <FormBlock>
             <FormBlockTitle>生日</FormBlockTitle>
             <DatePicker
-              onChange={setBirthday}
+              onChange={handleDatePick}
               value={birthday}
               maxDate={new Date()}
+              locale="zh-TW"
             />
             <DatePickerWrapperStyles />
           </FormBlock>
@@ -420,10 +487,16 @@ const Divination = () => {
               <option value={'unisex'}>是個秘密</option>
             </DropdownSelect>
           </FormBlock>
-          <ColorsBlockTitle>選一個最喜歡的顏色</ColorsBlockTitle>
+          <ZodiacTitle>{zodiac && zodiac.name + '的幸運星'}</ZodiacTitle>
+          <ColorsBlockTitle>選一個喜歡的顏色吧！</ColorsBlockTitle>
           <ColorsBlock>
             {selectedColor.map((color, index) => (
-              <ColorsSquare $hex={color.hex} key={index} $isPick={color.selected} onClick={()=>handlePickColor(index)}/>
+              <ColorsSquare
+                $hex={color.hex}
+                key={index}
+                $isPick={color.selected}
+                onClick={() => handlePickColor(index)}
+              />
             ))}
           </ColorsBlock>
           <ButtonArea>
