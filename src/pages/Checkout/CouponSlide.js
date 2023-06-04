@@ -132,8 +132,8 @@ function CouponSlide() {
         <CouponWrapper
           transform={
             window.innerWidth >= 1280
-              ? `translateX(${(-1050 / 2) * slideIdx}px);`
-              : `translateX(${-245 * slideIdx}px);`
+              ? `translateX(${-1050 * slideIdx}px);`
+              : `translateX(${-(window.innerWidth - 245) * slideIdx}px);`
           }>
           {ids.map(id => {
             return (
@@ -160,9 +160,9 @@ function CouponSlide() {
         }}
         visibility={
           (window.innerWidth >= 1280 &&
-            discountTypes.length * 245 - slideIdx * (1050 / 2) <= 1050) ||
+            discountTypes.length * 245 - slideIdx * 1050 <= 1050) ||
           (window.innerWidth < 1280 &&
-            discountTypes.length * 245 - slideIdx * 245 <=
+            discountTypes.length * 245 - slideIdx * (window.innerWidth - 245) <=
               window.innerWidth - 245)
             ? 'hidden'
             : 'visible'
