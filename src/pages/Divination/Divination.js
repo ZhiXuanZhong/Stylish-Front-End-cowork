@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -70,7 +71,15 @@ const Divination = () => {
     getZodiacSign(date);
   };
 
+   function convertDate  (date){
+    return date.toISOString().slice(0, 10)
+  }
+
   const handleStrawSubmit = async() => {
+
+    if(!birthday){
+      return alert('生日生日～ 要記得填呦！')
+    }
 
     if (strawData) {
       alert('你抽過了！好了就好了～！');
@@ -78,7 +87,7 @@ const Divination = () => {
 
       const answer = {
         data: {
-          birthday: birthday.toISOString().slice(0, 10),
+          birthday: convertDate(birthday),
           sign: zodiac.sign,
           gender: gender,
           color: selectedColor.filter(item => item.selected === true)[0].hex,
@@ -201,7 +210,7 @@ const StrawResult = ({strawData}) => {
         <StrawsStory>{strawData.straws_story.story}</StrawsStory>
       </StrawsWrapper>
       <CouponWrapper>
-        <Coupon discountPrice={150} discountType={'fixedAmout'} />
+        <Coupon discountPrice={strawData.discount} discountType={'fixedAmout'} expiredTime={strawData.valid_date.slice(0,10)}/>
       </CouponWrapper>
       <Products>
         {strawData.products.map((item, index) => {
@@ -211,7 +220,7 @@ const StrawResult = ({strawData}) => {
               <ProductTitle>{item.title}</ProductTitle>
               <ProductPrice>NT.{item.price}</ProductPrice>
               {/* FIXME link */}
-              <ProductLink>用券現折 →</ProductLink>
+              <ProductLink to={`/products/${item.id}`}>用券現折 →</ProductLink>
             </Product>
           );
         })}
@@ -517,7 +526,7 @@ const ProductPrice = styled.div`
   /* padding: 3px; */
 `;
 
-const ProductLink = styled.div`
+const ProductLink = styled(Link)`
   /* background-color: rgba(0, 0, 255, 0.2);
   outline: 1px solid gray; */
   /* FIXME */
