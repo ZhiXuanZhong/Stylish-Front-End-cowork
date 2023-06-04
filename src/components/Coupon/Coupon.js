@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import ReactLoading from 'react-loading';
 import dealItem from './img/deal-items.png';
 import fixedAmout from './img/fixed-amout.png';
 import freeShipping from './img/free-shipping.png';
@@ -13,10 +12,9 @@ const Wrapper = styled.div`
   box-shadow: 6px 6px 2px rgba(0, 0, 0, 0.2);
   background-color: #ffffff;
   cursor: pointer;
+  margin-left: 15px;
+  outline: ${props => props.outline};
 
-  &:hover {
-    outline: 4px solid #fc9700;
-  }
   @media screen and (max-width: 1279px) {
   }
 `;
@@ -74,15 +72,19 @@ export function Coupon({
   discountType,
   discountPrice,
   expiredTime,
+  selected,
+  clickAction,
 }) {
   return (
-    <Wrapper>
+    <Wrapper
+      onClick={clickAction}
+      outline={selected ? '4px solid #fc9700' : 'none'}>
       <CouponWrapper src={CouponMappingTable[discountType]} />
       <Description>
         <Discount>
           {(discountType === 'fixedAmout'
             ? `現金 `
-            : discountType === 'freeShipping'
+            : discountPrice === 'freeShipping'
             ? `運費 `
             : `特定品項 `) + `折${discountPrice}元`}
         </Discount>

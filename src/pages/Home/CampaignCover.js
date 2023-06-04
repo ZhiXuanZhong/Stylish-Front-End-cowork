@@ -1,15 +1,8 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import crystalBall from './crystal-ball.png';
-import Xmark from './x-mark.png';
-
-import api from '../../utils/api';
-
-//// 假資料喔
-const campaign_id = 12345667;
-const campaign = 'campaign';
-/////
+import draw from './draw.gif';
+import xmark from './x-mark.png';
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -18,6 +11,7 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   z-index: 99;
+  display: ${props => props.display};
   @media screen and (max-width: 1279px) {
   }
 `;
@@ -49,18 +43,18 @@ const CampaignAd = styled.div`
 `;
 
 const CrystalBall = styled.img`
-  width: 150px;
-  margin-top: -20px;
+  width: 110px;
+  margin-top: -50px;
 `;
 
 const CampSubTitle = styled.div`
-  font-size: 30px;
+  font-size: 28px;
   color: #ffffff;
-  margin-top: -10px;
+  margin-top: 10px;
 `;
 
 const CampTitle = styled.div`
-  font-size: 40px;
+  font-size: 35px;
   margin-top: 20px;
   color: #ffffff;
 `;
@@ -99,14 +93,27 @@ function disableScroll(event) {
 
 function CampaignCover() {
   const [adStatus, setAdStatus] = useState('block');
+  const [ignoreAd, setIgnoreAd] = useState(false);
 
   useEffect(() => {
-    document.body.addEventListener('scroll', disableScroll);
-    document.body.style.overflow = 'hidden';
+    const showAd = sessionStorage.getItem('showAd');
+    if (showAd === 'isActivated') {
+      // pass
+      setIgnoreAd(true);
+    } else {
+      document.body.addEventListener('scroll', disableScroll);
+      document.body.style.overflow = 'hidden';
+      sessionStorage.setItem('showAd', 'isActivated');
+
+      return () => {
+        document.body.removeEventListener('scroll', disableScroll);
+        document.body.style.overflow = 'auto';
+      };
+    }
   }, []);
 
   return (
-    <Wrapper>
+    <Wrapper display={ignoreAd ? 'none' : ''}>
       <Overlay
         overLayDisplay={adStatus}
         onClick={event => {
@@ -117,7 +124,7 @@ function CampaignCover() {
       <CampaignAd adDisplay={adStatus == 'none' ? 'none' : 'flex'}>
         <CloseButtonWrapper>
           <CloseButton
-            src={Xmark}
+            src={xmark}
             onClick={() => {
               setAdStatus('none');
               document.body.removeEventListener('scroll', disableScroll);
@@ -126,13 +133,17 @@ function CampaignCover() {
           />
         </CloseButtonWrapper>
 
-        <CrystalBall src={crystalBall} alt="" />
+        <CrystalBall src={draw} alt="" />
         <CampSubTitle>抽出好運勢</CampSubTitle>
         <CampTitle>馬上參加好運預測</CampTitle>
-        <Link
-          to={`/${campaign}/${campaign_id}`}
-          style={{textDecoration: 'none'}}>
-          <GoButton onClick={() => console(1)}>立即抽 {'>'}</GoButton>
+        <Link to={`/divination`} style={{textDecoration: 'none'}}>
+          <GoButton
+            onClick={() => {
+              document.body.removeEventListener('scroll', disableScroll);
+              document.body.style.overflow = 'auto';
+            }}>
+            立即抽 {'>'}
+          </GoButton>
         </Link>
       </CampaignAd>
     </Wrapper>
