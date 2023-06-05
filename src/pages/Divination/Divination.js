@@ -217,7 +217,7 @@ const StrawResult = ({strawData}) => {
         },
       };
 
-      const result = await api.claimCoupon(couponData, jwtToken);
+      const result = await api.claimCoupon(couponData, token);
 
       switch (result.status) {
         case 403:
@@ -245,7 +245,7 @@ const StrawResult = ({strawData}) => {
       <CouponWrapper>
         <Coupon
           discountPrice={strawData.discount}
-          discountType={'fixedAmout'}
+          discountType={strawData.coupon_name}
           expiredTime={strawData.valid_date.slice(0, 10)}
           claim={claim}
         />
@@ -257,7 +257,6 @@ const StrawResult = ({strawData}) => {
               <ProductImage src={item.main_image} />
               <ProductTitle>{item.title}</ProductTitle>
               <ProductPrice>NT.{item.price}</ProductPrice>
-              {/* FIXME link */}
               <ProductLink to={`/products/${item.id}`}>用券現折 →</ProductLink>
             </Product>
           );
