@@ -1,9 +1,6 @@
 import Coupon from '../../components/Coupon';
 import styled from 'styled-components';
-import api from '../../utils/api';
-import {AuthContext} from '../../context/authContext';
-
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect} from 'react';
 
 const couponActivated = true;
 
@@ -72,36 +69,15 @@ const NextBtn = styled.div`
   visibility: ${props => props.visibility};
 `;
 
-function CouponSlide({setDiscount, setCouponId}) {
-  const [coupons, setCoupons] = useState([]);
+function CouponSlide({setDiscount, setCouponId, coupons}) {
   const [slideIdx, setSlideIdx] = useState(0);
   const [couponSelected, setCouponSelected] = useState();
-  const {jwtToken, isLogin, login} = useContext(AuthContext);
-
-  async function queryCoupon() {
-    try {
-      const token = isLogin ? jwtToken : await login();
-      console.log(token);
-      if (!token) {
-        window.alert('請登入會員');
-        return;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-
-    const {data} = await api.queryCoupon(jwtToken);
-    await setCoupons(data.coupon.filter(obj => obj.used === false));
-  }
 
   const moveSlideToStart = () => {
     setSlideIdx(0);
   };
 
   useEffect(() => {
-    // checkoutCoupon();
-    queryCoupon();
-
     window.addEventListener('resize', moveSlideToStart);
 
     return () => {
@@ -142,10 +118,6 @@ function CouponSlide({setDiscount, setCouponId}) {
                     setDiscount(coupon.discount);
                     setCouponId(coupon.id);
                   }
-
-                  // couponSelected === coupon.id
-                  //   ? setCouponSelected(undefined)
-                  //   : setCouponSelected(coupon.id);
                 }}
               />
             );
