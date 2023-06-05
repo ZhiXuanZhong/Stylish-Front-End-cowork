@@ -59,6 +59,8 @@ const GetButton = styled.div`
   margin-left: 10px;
   margin-right: 10px;
   cursor: pointer;
+
+  ${prorps => prorps.$hasText ? 'background-color: #888;' : null}
 `;
 
 const CouponMappingTable = {
@@ -74,7 +76,8 @@ export function Coupon({
   expiredTime,
   selected,
   clickAction,
-  claim
+  claim,
+  hasClaim
 }) {
   return (
     <Wrapper
@@ -95,8 +98,10 @@ export function Coupon({
       </Description>
       <GetButton
         onClick={() => claim()}
-        display={couponActivated ? 'none' : 'flex'}>
-        領取
+        display={couponActivated ? 'none' : 'flex'}
+        $hasText={hasClaim}
+        >
+        {hasClaim ? '已領取'  : '領取' }
       </GetButton>
     </Wrapper>
   );

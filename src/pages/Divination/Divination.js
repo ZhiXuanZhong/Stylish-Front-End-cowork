@@ -199,6 +199,7 @@ export default Divination;
 
 const StrawResult = ({strawData}) => {
   const {jwtToken, isLogin, login} = useContext(AuthContext);
+  const [hasClaim, setHasClaim] = useState(false);
 
   const claim = async () => {
     console.log('here');
@@ -225,6 +226,7 @@ const StrawResult = ({strawData}) => {
           break;
         case 200:
           alert('領取成功');
+          setHasClaim(true)
           break;
         default:
           throw new Error('系統錯誤');
@@ -248,6 +250,8 @@ const StrawResult = ({strawData}) => {
           discountType={strawData.coupon_name}
           expiredTime={strawData.valid_date.slice(0, 10)}
           claim={claim}
+          couponActivated={false}
+          hasClaim={hasClaim}
         />
       </CouponWrapper>
       <Products>
