@@ -1,15 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
+import {AuthContext} from '../../context/authContext';
 import draw from '../Home/draw.gif';
 
 import api from '../../utils/api';
-
-
 
 const Divination = () => {
   const colors = [
@@ -71,20 +70,18 @@ const Divination = () => {
     getZodiacSign(date);
   };
 
-   function convertDate  (date){
-    return date.toISOString().slice(0, 10)
+  function convertDate(date) {
+    return date.toISOString().slice(0, 10);
   }
 
-  const handleStrawSubmit = async() => {
-
-    if(!birthday){
-      return alert('生日生日～ 要記得填呦！')
+  const handleStrawSubmit = async () => {
+    if (!birthday) {
+      return alert('生日生日～ 要記得填呦！');
     }
 
     if (strawData) {
       alert('你抽過了！好了就好了～！');
     } else {
-
       const answer = {
         data: {
           birthday: convertDate(birthday),
@@ -98,7 +95,6 @@ const Divination = () => {
       setStrawData(data);
       console.log(data);
     }
-
   };
 
   const getZodiacSign = dateString => {
@@ -201,8 +197,45 @@ const Divination = () => {
 
 export default Divination;
 
-
 const StrawResult = ({strawData}) => {
+  const {jwtToken, isLogin, login} = useContext(AuthContext);
+
+  const claim = async () => {
+    console.log('here');
+
+    try {
+      const token = isLogin ? jwtToken : await login();
+
+      if (!token) {
+        window.alert('登入會員，馬上領取');
+        return;
+      }
+
+      const couponData = {
+        data: {
+          coupon_id: strawData.coupon_id,
+        },
+      };
+
+      const result = await api.claimCoupon(couponData, jwtToken);
+
+      switch (result.status) {
+        case 403:
+          alert('這週領過了拉～');
+          break;
+        case 200:
+          alert('領取成功');
+          break;
+        default:
+          throw new Error('系統錯誤');
+      }
+    } catch (err) {
+      alert(err);
+    } finally {
+      console.log('finally');
+    }
+  };
+
   return (
     <>
       <StrawsWrapper>
@@ -210,7 +243,12 @@ const StrawResult = ({strawData}) => {
         <StrawsStory>{strawData.straws_story.story}</StrawsStory>
       </StrawsWrapper>
       <CouponWrapper>
-        <Coupon discountPrice={strawData.discount} discountType={'fixedAmout'} expiredTime={strawData.valid_date.slice(0,10)}/>
+        <Coupon
+          discountPrice={strawData.discount}
+          discountType={'fixedAmout'}
+          expiredTime={strawData.valid_date.slice(0, 10)}
+          claim={claim}
+        />
       </CouponWrapper>
       <Products>
         {strawData.products.map((item, index) => {
