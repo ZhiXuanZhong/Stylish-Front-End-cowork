@@ -1,35 +1,11 @@
 import Coupon from '../../components/Coupon';
 import styled from 'styled-components';
 import api from '../../utils/api';
-import {useEffect, useState} from 'react';
+import {AuthContext} from '../../context/authContext';
 
-//// 假資料喔
+import {useState, useEffect, useContext} from 'react';
+
 const couponActivated = true;
-const ids = [0, 1, 2, 3, 4, 5, 6, 7];
-const discountTypes = [
-  'fixedAmout',
-  'dealItem',
-  'freeShipping',
-  'dealItem',
-  'freeShipping',
-  'fixedAmout',
-  'dealItem',
-  'freeShipping',
-];
-const discountPrices = ['150', '200', '700', '600', '100', '777', '888', '999'];
-
-const expiredTimes = [
-  '2023.08.05',
-  '2023.06.18',
-  '2023.07.24',
-  '2023.04.09',
-  '2023.01.19',
-  '2023.04.10',
-  '2023.07.28',
-  '2023.08.01',
-];
-
-////
 
 const Wrapper = styled.div`
   width: 1160px;
@@ -61,10 +37,8 @@ const CouponWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 15px;
-
   transform: ${props => props.transform};
   transition: transform 800ms cubic-bezier(0.5, 0, 0.5, 1);
-  /* overflow: hidden; */
   @media screen and (max-width: 1279px) {
     width: 100%;
   }
@@ -98,14 +72,15 @@ const NextBtn = styled.div`
   visibility: ${props => props.visibility};
 `;
 
-function CouponSlide() {
+function CouponSlide({setDiscount, setCouponId}) {
   const [coupons, setCoupons] = useState([]);
   const [slideIdx, setSlideIdx] = useState(0);
   const [couponSelected, setCouponSelected] = useState();
+  const {jwtToken, isLogin, login} = useContext(AuthContext);
 
-  async function getCoupon() {
-    const {data} = await api.getCoupon();
-    setCoupons(data.coupon);
+  async function queryCoupon() {
+    const {data} = await api.queryCoupon(jwtToken);
+    setCoupons(data.coupon.filter(obj => obj.used === false));
   }
 
   const moveSlideToStart = () => {
@@ -113,7 +88,7 @@ function CouponSlide() {
   };
 
   useEffect(() => {
-    getCoupon();
+    queryCoupon();
     window.addEventListener('resize', moveSlideToStart);
 
     return () => {
@@ -129,30 +104,44 @@ function CouponSlide() {
         }}
         visibility={slideIdx === 0 ? 'hidden' : 'visible'}></PrevBtn>
       <HiddenWrapper>
-        <CouponWrapper
-          transform={
-            window.innerWidth >= 1280
-              ? `translateX(${-1050 * slideIdx}px);`
-              : `translateX(${-(window.innerWidth - 245) * slideIdx}px);`
-          }>
-          {ids.map(id => {
-            return (
-              <Coupon
-                key={id}
-                couponActivated={couponActivated}
-                discountType={discountTypes[id]}
-                discountPrice={discountPrices[id]}
-                expiredTime={expiredTimes[id]}
-                selected={couponSelected === id}
-                clickAction={() => {
-                  couponSelected === id
-                    ? setCouponSelected(undefined)
-                    : setCouponSelected(id);
-                }}
-              />
-            );
-          })}
-        </CouponWrapper>
+        {isLogin ? (
+          <CouponWrapper
+            transform={
+              window.innerWidth >= 1280
+                ? `translateX(${-1050 * slideIdx}px);`
+                : `translateX(${-(window.innerWidth - 245) * slideIdx}px);`
+            }>
+            {coupons.map(coupon => {
+              return (
+                <Coupon
+                  key={coupon.id}
+                  couponActivated={couponActivated}
+                  discountType={coupon.type}
+                  discountPrice={coupon.discount}
+                  expiredTime={coupon.expire_time}
+                  selected={couponSelected === coupon.id}
+                  clickAction={() => {
+                    if (couponSelected === coupon.id) {
+                      setCouponSelected(undefined);
+                      setDiscount(0);
+                      setCouponId(undefined);
+                    } else {
+                      setCouponSelected(coupon.id);
+                      setDiscount(coupon.discount);
+                      setCouponId(coupon.id);
+                    }
+
+                    // couponSelected === coupon.id
+                    //   ? setCouponSelected(undefined)
+                    //   : setCouponSelected(coupon.id);
+                  }}
+                />
+              );
+            })}
+          </CouponWrapper>
+        ) : (
+          <div>請先登錄喔～❤️</div>
+        )}
       </HiddenWrapper>
       <NextBtn
         onClick={() => {
@@ -160,9 +149,9 @@ function CouponSlide() {
         }}
         visibility={
           (window.innerWidth >= 1280 &&
-            discountTypes.length * 245 - slideIdx * 1050 <= 1050) ||
+            coupons.length * 245 - slideIdx * 1050 <= 1050) ||
           (window.innerWidth < 1280 &&
-            discountTypes.length * 245 - slideIdx * (window.innerWidth - 245) <=
+            coupons.length * 245 - slideIdx * (window.innerWidth - 245) <=
               window.innerWidth - 245)
             ? 'hidden'
             : 'visible'

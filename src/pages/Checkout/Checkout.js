@@ -211,6 +211,14 @@ const SubtotalPrice = styled(Price)`
 
 const ShippingPrice = styled(Price)`
   margin-top: 20px;
+
+  @media screen and (max-width: 1279px) {
+    margin-top: 20px;
+  }
+`;
+
+const DiscountPrice = styled(Price)`
+  margin-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #3f3a3a;
 
@@ -299,6 +307,9 @@ function Checkout() {
   const {jwtToken, isLogin, login} = useContext(AuthContext);
   const {cartItems, setCartItems} = useContext(CartContext);
 
+  const [discount, setDiscount] = useState(0);
+  const [couponId, setCouponId] = useState();
+
   useEffect(() => {
     const setupTappay = async () => {
       await tappay.setupSDK();
@@ -361,9 +372,10 @@ function Checkout() {
           order: {
             shipping: 'delivery',
             payment: 'credit_card',
+            coupon_id: couponId,
             subtotal,
             freight,
-            total: subtotal + freight,
+            total: subtotal + freight - discount,
             recipient,
             list: cartItems,
           },
@@ -383,7 +395,7 @@ function Checkout() {
   return (
     <Wrapper>
       <Cart />
-      <CouponSlide />
+      <CouponSlide setDiscount={setDiscount} setCouponId={setCouponId} />
 
       <GrayBlock>
         <Label>配送國家</Label>
@@ -459,10 +471,15 @@ function Checkout() {
         <Currency>NT.</Currency>
         <PriceValue>{freight}</PriceValue>
       </ShippingPrice>
+      <DiscountPrice>
+        <PriceName>折扣</PriceName>
+        <Currency>NT.</Currency>
+        <PriceValue>{discount}</PriceValue>
+      </DiscountPrice>
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight}</PriceValue>
+        <PriceValue>{subtotal + freight - discount}</PriceValue>
       </TotalPrice>
       <Button loading={loading} onClick={checkout}>
         確認付款

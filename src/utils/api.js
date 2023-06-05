@@ -1,6 +1,7 @@
 const api = {
   hostname: 'https://hyperushle.com/api',
   backendAccessToken: 'x48aDD534da8ADSD1XC4SD5S',
+
   async getProducts(category, paging) {
     const response = await fetch(
       `${this.hostname}/products/${category}?paging=${paging}`,
@@ -51,11 +52,10 @@ const api = {
     });
     return await response.json();
   },
-
-  async getCoupon() {
+  async queryCoupon(jwtToken) {
     const response = await fetch(`${this.hostname}/cart/coupon`, {
       headers: new Headers({
-        Authorization: `Bearer ${this.backendAccessToken}`,
+        Authorization: `Bearer ${jwtToken}`,
       }),
     });
     return await response.json();
@@ -63,13 +63,13 @@ const api = {
   async getStraw(data) {
     console.log(data);
     const response = await fetch(`${this.hostname}/front/divination`, {
-      body: JSON.stringify(data), 
+      body: JSON.stringify(data),
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
-      method: "POST",
+      method: 'POST',
     });
-    return await response.json()
+    return await response.json();
   },
   async claimCoupon(data, jwtToken) {
     const response = await fetch(`${this.hostname}/coupon`, {
@@ -78,14 +78,14 @@ const api = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${jwtToken}`,
       }),
-      method: "POST",
+      method: 'POST',
     });
-    console.log(response.status)
+    console.log(response.status);
 
-    const res = {data:response.json(), status:response.status}
+    const res = {data: response.json(), status: response.status};
 
     return await res;
-  }
+  },
 };
 
 export default api;
