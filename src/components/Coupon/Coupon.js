@@ -74,6 +74,7 @@ export function Coupon({
   expiredTime,
   selected,
   clickAction,
+  claim
 }) {
   return (
     <Wrapper
@@ -91,7 +92,7 @@ export function Coupon({
         <ExpiredTime>有效期限 {expiredTime}</ExpiredTime>
       </Description>
       <GetButton
-        onClick={() => console.log(123)}
+        onClick={() => claim()}
         display={couponActivated ? 'none' : 'flex'}>
         領取
       </GetButton>
