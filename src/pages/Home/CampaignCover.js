@@ -21,7 +21,6 @@ const Overlay = styled.div`
   height: 100%;
   z-index: 999;
   background-color: rgb(0, 0, 0, 0.45);
-  /* opacity: 50%; */
   display: ${props => props.overLayDisplay};
 `;
 
@@ -32,7 +31,6 @@ const CampaignAd = styled.div`
   left: 50%;
   border-radius: 24px;
   transform: translate(-50%, -50%);
-  /* display: flex; */
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -42,7 +40,7 @@ const CampaignAd = styled.div`
   display: ${props => props.adDisplay};
 `;
 
-const CrystalBall = styled.img`
+const DrawLots = styled.img`
   width: 110px;
   margin-top: -50px;
 `;
@@ -92,13 +90,12 @@ function disableScroll(event) {
 }
 
 function CampaignCover() {
-  const [adStatus, setAdStatus] = useState('block');
   const [ignoreAd, setIgnoreAd] = useState(false);
+  const [adStatus, setAdStatus] = useState('flex');
 
   useEffect(() => {
     const showAd = sessionStorage.getItem('showAd');
     if (showAd === 'isActivated') {
-      // pass
       setIgnoreAd(true);
     } else {
       document.body.addEventListener('scroll', disableScroll);
@@ -113,29 +110,30 @@ function CampaignCover() {
   }, []);
 
   return (
-    <Wrapper display={ignoreAd ? 'none' : ''}>
+    <Wrapper display={ignoreAd ? 'none' : 'block'}>
       <Overlay
         overLayDisplay={adStatus}
-        onClick={event => {
-          event.target.style.display = 'none';
+        onClick={() => {
           setAdStatus('none');
+          setIgnoreAd(true);
           document.body.removeEventListener('scroll', disableScroll);
           document.body.style.overflow = 'auto';
         }}
       />
-      <CampaignAd adDisplay={adStatus === 'none' ? 'none' : 'flex'}>
+      <CampaignAd adDisplay={adStatus}>
         <CloseButtonWrapper>
           <CloseButton
             src={xmark}
             onClick={() => {
               setAdStatus('none');
+              setIgnoreAd(true);
               document.body.removeEventListener('scroll', disableScroll);
               document.body.style.overflow = 'auto';
             }}
           />
         </CloseButtonWrapper>
 
-        <CrystalBall src={draw} alt="" />
+        <DrawLots src={draw} alt="" />
         <CampSubTitle>抽出好運勢</CampSubTitle>
         <CampTitle>馬上參加好運預測</CampTitle>
         <Link to={`/divination`} style={{textDecoration: 'none'}}>
