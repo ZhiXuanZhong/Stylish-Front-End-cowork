@@ -119,9 +119,11 @@ function CampaignCover() {
         onClick={event => {
           event.target.style.display = 'none';
           setAdStatus('none');
+          document.body.removeEventListener('scroll', disableScroll);
+          document.body.style.overflow = 'auto';
         }}
       />
-      <CampaignAd adDisplay={adStatus == 'none' ? 'none' : 'flex'}>
+      <CampaignAd adDisplay={adStatus === 'none' ? 'none' : 'flex'}>
         <CloseButtonWrapper>
           <CloseButton
             src={xmark}

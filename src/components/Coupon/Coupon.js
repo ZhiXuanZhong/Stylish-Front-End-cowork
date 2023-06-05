@@ -62,9 +62,9 @@ const GetButton = styled.div`
 `;
 
 const CouponMappingTable = {
-  dealItem: dealItem,
-  fixedAmout: fixedAmout,
-  freeShipping: freeShipping,
+  fixed_amout: fixedAmout,
+  free_shipping: freeShipping,
+  'deal items': dealItem,
 };
 
 export function Coupon({
@@ -83,13 +83,15 @@ export function Coupon({
       <CouponWrapper src={CouponMappingTable[discountType]} />
       <Description>
         <Discount>
-          {(discountType === 'fixedAmout'
-            ? `現金 `
-            : discountPrice === 'freeShipping'
-            ? `運費 `
-            : `特定品項 `) + `折${discountPrice}元`}
+          {(discountType === 'fixed_amout'
+            ? '現金 '
+            : discountType === 'free_shipping'
+            ? '運費 '
+            : discountType === 'deal items'
+            ? '特定品項 '
+            : '其他優惠') + `折${discountPrice}元`}
         </Discount>
-        <ExpiredTime>有效期限 {expiredTime}</ExpiredTime>
+        <ExpiredTime>有效期限 {expiredTime.slice(0, 10)}</ExpiredTime>
       </Description>
       <GetButton
         onClick={() => claim()}
