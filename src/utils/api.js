@@ -70,6 +70,16 @@ const api = {
       method: "POST",
     });
     return await response.json()
+  },
+  async claimCoupon(data, jwtToken) {
+    const response = await fetch(`${this.hostname}/user/coupon`, {
+      body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      }),
+    });
+    return await response.json();
   }
 };
 
