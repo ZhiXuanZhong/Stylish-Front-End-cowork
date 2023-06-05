@@ -310,7 +310,26 @@ function Checkout() {
   const [discount, setDiscount] = useState(0);
   const [couponId, setCouponId] = useState();
 
+  const [coupons, setCoupons] = useState([]);
+  async function queryCoupon() {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        const {data} = await api.queryCoupon(token);
+        setCoupons(data.coupon.filter(obj => obj.used === false));
+      }
+      if (!token) {
+        window.alert('請登入會員');
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
+    queryCoupon();
+
     const setupTappay = async () => {
       await tappay.setupSDK();
       tappay.setupCard(
@@ -395,7 +414,11 @@ function Checkout() {
   return (
     <Wrapper>
       <Cart />
-      <CouponSlide setDiscount={setDiscount} setCouponId={setCouponId} />
+      <CouponSlide
+        setDiscount={setDiscount}
+        setCouponId={setCouponId}
+        coupons={coupons}
+      />
 
       <GrayBlock>
         <Label>配送國家</Label>
