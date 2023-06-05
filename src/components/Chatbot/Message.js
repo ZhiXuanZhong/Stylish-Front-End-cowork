@@ -14,6 +14,7 @@ const ContentBoxWrapper = styled.div`
   max-width: 80%;
   /* height: 60px; */
   background-color: #ffffff;
+  background-color: ${props => props.backgroundColor};
   border-radius: 24px;
 `;
 
@@ -30,8 +31,10 @@ export function Message({messages}) {
 
       {messages.map((message, idx) => {
         return (
-          <ContentBoxWrapper>
-            <Content marginTop={idx === 0 ? '0px' : '12px'}>{message}</Content>
+          <ContentBoxWrapper key={idx}>
+            <Content key={idx} marginTop={idx === 0 ? '0px' : '12px'}>
+              {message}
+            </Content>
           </ContentBoxWrapper>
         );
       })}

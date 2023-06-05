@@ -31,7 +31,7 @@ const Chatroom = styled.div`
   width: 350px;
   height: 550px;
   position: fixed;
-  background-color: #ffffff;
+  background-color: #f4f4f4;
   box-shadow: 0 0 3em rgba(0, 0, 0, 0.15);
   bottom: 122px;
   right: 0;
@@ -46,6 +46,8 @@ const HeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #ffffff;
+  border-radius: 18px;
   box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.1);
 `;
 
@@ -94,26 +96,22 @@ const Title = styled.div`
 `;
 
 const MessageWrapper = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f4f4f4;
 `;
 
 const MessageBox = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f4f4f4;
 `;
 
 export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
-  const messages = [
+  const [messages, setMessages] = useState([
     '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
     '有什麼可以為您服務嗎？',
-  ];
+  ]);
 
   return (
     <Wrapper>
@@ -146,7 +144,7 @@ export function Chatbot() {
         <MessageWrapper>
           <MessageBox>
             <Message messages={messages} />
-            <Tag />
+            <Tag setMessages={setMessages} />
           </MessageBox>
         </MessageWrapper>
       </Chatroom>

@@ -10,8 +10,10 @@ const TagWrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  width: 90%;
+  width: 100%;
   gap: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const ChatbotTag = styled.div`
@@ -19,8 +21,11 @@ const ChatbotTag = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 16px;
-  border: solid 1px #32a1ce;
+  border: solid 1px #add8e6;
   padding: 6px;
+  color: #7092aa;
+  background-color: #ffffff;
+  padding: 8px;
 `;
 
 const tags = [
@@ -31,12 +36,20 @@ const tags = [
   '最新流行服飾推薦 ✨',
 ];
 
-export function Tag() {
+export function Tag({setMessages}) {
   return (
     <Wrapper>
       <TagWrapper>
-        {tags.map(tag => {
-          return <ChatbotTag>{tag}</ChatbotTag>;
+        {tags.map((tag, idx) => {
+          return (
+            <ChatbotTag
+              key={idx}
+              onClick={() => {
+                setMessages(prev => [...prev, tag]);
+              }}>
+              {tag}
+            </ChatbotTag>
+          );
         })}
       </TagWrapper>
     </Wrapper>

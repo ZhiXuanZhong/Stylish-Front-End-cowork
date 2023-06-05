@@ -79,8 +79,19 @@ function CouponSlide({setDiscount, setCouponId}) {
   const {jwtToken, isLogin, login} = useContext(AuthContext);
 
   async function queryCoupon() {
+    try {
+      const token = isLogin ? jwtToken : await login();
+      console.log(token);
+      if (!token) {
+        window.alert('請登入會員');
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
     const {data} = await api.queryCoupon(jwtToken);
-    setCoupons(data.coupon.filter(obj => obj.used === false));
+    await setCoupons(data.coupon.filter(obj => obj.used === false));
   }
 
   const moveSlideToStart = () => {
@@ -88,7 +99,9 @@ function CouponSlide({setDiscount, setCouponId}) {
   };
 
   useEffect(() => {
+    // checkoutCoupon();
     queryCoupon();
+
     window.addEventListener('resize', moveSlideToStart);
 
     return () => {
@@ -104,44 +117,40 @@ function CouponSlide({setDiscount, setCouponId}) {
         }}
         visibility={slideIdx === 0 ? 'hidden' : 'visible'}></PrevBtn>
       <HiddenWrapper>
-        {isLogin ? (
-          <CouponWrapper
-            transform={
-              window.innerWidth >= 1280
-                ? `translateX(${-1050 * slideIdx}px);`
-                : `translateX(${-(window.innerWidth - 245) * slideIdx}px);`
-            }>
-            {coupons.map(coupon => {
-              return (
-                <Coupon
-                  key={coupon.id}
-                  couponActivated={couponActivated}
-                  discountType={coupon.type}
-                  discountPrice={coupon.discount}
-                  expiredTime={coupon.expire_time}
-                  selected={couponSelected === coupon.id}
-                  clickAction={() => {
-                    if (couponSelected === coupon.id) {
-                      setCouponSelected(undefined);
-                      setDiscount(0);
-                      setCouponId(undefined);
-                    } else {
-                      setCouponSelected(coupon.id);
-                      setDiscount(coupon.discount);
-                      setCouponId(coupon.id);
-                    }
+        <CouponWrapper
+          transform={
+            window.innerWidth >= 1280
+              ? `translateX(${-1050 * slideIdx}px);`
+              : `translateX(${-(window.innerWidth - 245) * slideIdx}px);`
+          }>
+          {coupons.map(coupon => {
+            return (
+              <Coupon
+                key={coupon.id}
+                couponActivated={couponActivated}
+                discountType={coupon.type}
+                discountPrice={coupon.discount}
+                expiredTime={coupon.expire_time}
+                selected={couponSelected === coupon.id}
+                clickAction={() => {
+                  if (couponSelected === coupon.id) {
+                    setCouponSelected(undefined);
+                    setDiscount(0);
+                    setCouponId(undefined);
+                  } else {
+                    setCouponSelected(coupon.id);
+                    setDiscount(coupon.discount);
+                    setCouponId(coupon.id);
+                  }
 
-                    // couponSelected === coupon.id
-                    //   ? setCouponSelected(undefined)
-                    //   : setCouponSelected(coupon.id);
-                  }}
-                />
-              );
-            })}
-          </CouponWrapper>
-        ) : (
-          <div>請先登錄喔～❤️</div>
-        )}
+                  // couponSelected === coupon.id
+                  //   ? setCouponSelected(undefined)
+                  //   : setCouponSelected(coupon.id);
+                }}
+              />
+            );
+          })}
+        </CouponWrapper>
       </HiddenWrapper>
       <NextBtn
         onClick={() => {
