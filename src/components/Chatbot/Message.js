@@ -42,6 +42,7 @@ const Description = styled.div`
 
 const ProdImg = styled.img`
   width: 160px;
+  border-radius: 24px;
 `;
 
 const InfoWrapper = styled.div`
