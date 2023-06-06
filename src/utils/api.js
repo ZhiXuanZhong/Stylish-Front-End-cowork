@@ -79,22 +79,19 @@ const api = {
       }),
       method: 'POST',
     });
-
     const res = {data: response.json(), status: response.status};
-
     return await res;
   },
-  async getBotMessage(type){
-    const response = await fetch(`${this.hostname}/front/chatbox`,{
+  async getBotMessage(type) {
+    const response = await fetch(`${this.hostname}/front/chatbox`, {
       body: JSON.stringify(type),
       headers: new Headers({
-        'Content-Type' : 'application/json',
+        'Content-Type': 'application/json',
       }),
-      method: 'POST'
-    })
-
-    console.log(await response.json())
-  }
+      method: 'POST',
+    });
+    return await response.json();
+  },
 };
 
 export default api;
