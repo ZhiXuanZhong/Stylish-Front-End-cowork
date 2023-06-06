@@ -3,6 +3,7 @@ import chatbotIcon from './img/chatbot-icon.png';
 import {Message} from './Message.js';
 import {Tag} from './Tag.js';
 import {useState} from 'react';
+import {useImmer} from 'use-immer';
 
 const Wrapper = styled.div``;
 
@@ -111,19 +112,26 @@ const MessageBox = styled.div`
 export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
-  const [messages, setMessages] = useState([
-    '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
-    '有什麼可以為您服務嗎？',
-  ]);
+  // const [messages, setMessages] = useState([
+  //   '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
+  //   '有什麼可以為您服務嗎？',
+  // ]);
 
-  const [message, setMessage] = useState({
-    text: [
+  const [messages, setMessages] = useImmer({
+    texts: [
       [
         '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
         '有什麼可以為您服務嗎？',
       ],
     ],
-    style: [{}, {}],
+    style: [
+      {
+        alignItems: 'flex-start', // flex-end
+        avatar: chatbotIcon, // user avatar
+        backgroundColor: '#ffffff', // #1F75FE  #1877F2
+        color: '#000000',
+      },
+    ],
   });
 
   return (

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "immer": "^10.0.2",
     "react": "^18.1.0",
     "react-date-picker": "^10.2.0",
     "react-dom": "^18.1.0",
@@ -10,7 +11,9 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",
-    "styled-reset": "^4.4.1"
+    "styled-reset": "^4.4.1",
+    "use-immer": "^0.9.0",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",

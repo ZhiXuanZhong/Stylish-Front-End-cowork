@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import userIcon from './img/user-icon.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,11 +30,11 @@ const ChatbotTag = styled.div`
 `;
 
 const tags = [
-  '連身裙推薦 👗',
-  '熱門推薦 🔥',
-  '牛仔褲推薦 👖',
-  '優惠活動詢問 🎁',
-  '最新流行服飾推薦 ✨',
+  {text: '連身裙推薦 👗', type: 'dress'},
+  {text: '熱門推薦 🔥', type: 'hots'},
+  {text: '牛仔褲推薦 👖', type: 'jeans'},
+  {text: '優惠活動詢問 🎁', type: 'divination'},
+  {text: '最新流行服飾推薦 ✨', type: 'new'},
 ];
 
 export function Tag({setMessages}) {
@@ -45,9 +46,18 @@ export function Tag({setMessages}) {
             <ChatbotTag
               key={idx}
               onClick={() => {
-                setMessages(prev => [...prev, tag]);
+                setMessages(draft => {
+                  draft.texts.push([tag.text]);
+                  draft.style.push({
+                    alignItems: 'flex-end',
+                    avatar: userIcon,
+                    backgroundColor: '#1F75FE',
+                    color: '#ffffff',
+                  });
+                  return draft;
+                });
               }}>
-              {tag}
+              {tag.text}
             </ChatbotTag>
           );
         })}
