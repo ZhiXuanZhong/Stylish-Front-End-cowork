@@ -98,6 +98,9 @@ const Title = styled.div`
 const MessageWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+  position: relative;
+  height: 460px;
 `;
 
 const MessageBox = styled.div`
@@ -113,6 +116,16 @@ export function Chatbot() {
     '有什麼可以為您服務嗎？',
   ]);
 
+  const [message, setMessage] = useState({
+    text: [
+      [
+        '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
+        '有什麼可以為您服務嗎？',
+      ],
+    ],
+    style: [{}, {}],
+  });
+
   return (
     <Wrapper>
       <ChatbotBtn
@@ -123,7 +136,6 @@ export function Chatbot() {
           window.setTimeout(() => setChatRoomShow(true), 400);
         }}
       />
-
       <Chatroom
         transform={chatRoomShow ? 'translateX(0%)' : 'translateX(100%)'}>
         <HeaderWrapper>
