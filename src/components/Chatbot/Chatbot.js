@@ -2,9 +2,12 @@ import styled from 'styled-components';
 import chatbotIcon from './img/chatbot-icon.png';
 import inputBtn from './img/input-btn.png';
 import {Message} from './Message.js';
+import {SocketMessage} from './SocketMessage.js';
 import {Tag} from './Tag.js';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useImmer} from 'use-immer';
+import {io} from 'socket.io-client';
+const socket = io('http://54.253.197.166/');
 
 const Wrapper = styled.div``;
 
@@ -137,6 +140,12 @@ const InputButton = styled.img`
 export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
+  // const [messages, setMessages] = useState([
+  //   '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
+  //   '有什麼可以為您服務嗎？',
+  // ]);
+
+  const [threads, setThreads] = useImmer([]);
   const [messages, setMessages] = useImmer({
     characters: ['chatbot'],
     texts: [
@@ -163,6 +172,12 @@ export function Chatbot() {
     campaignImage: [undefined],
     campaignPath: [undefined],
   });
+
+  useEffect(() => {
+    socket.on('message', response => {
+      setThreads(draft => draft.concat(response.data));
+    });
+  }, []);
 
   return (
     <Wrapper>
@@ -195,6 +210,7 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
+            <SocketMessage threads={threads} />
           </MessageBox>
         </MessageWrapper>
         <InputWrapper>
