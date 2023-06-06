@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useRef, useEffect} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 import {Link} from 'react-router-dom';
 import DatePicker from 'react-date-picker';
@@ -34,28 +34,12 @@ const Divination = () => {
     },
   ];
 
-  const userInputMock = {
-    birthday: null,
-    sign: 'Leo',
-    gender: 'unisex',
-    color: '#CCCCCC', // Hex code
-  };
 
-  const [birthday, setBirthday] = useState(userInputMock.birthday);
+  const [birthday, setBirthday] = useState(null);
   const [gender, setGender] = useState('women');
   const [selectedColor, setSelectColor] = useState(colors);
   const [zodiac, setZodiac] = useState();
   const [strawData, setStrawData] = useState();
-
-  async function getStraw() {
-    if (strawData) {
-      alert('你抽過了！好了就好了～！');
-    } else {
-      const {data} = await api.getStraw();
-      setStrawData(data);
-      console.log(data);
-    }
-  }
 
   const handlePickColor = index => {
     const nowIndex = selectedColor.map(e => e.selected).indexOf(true);
@@ -189,7 +173,7 @@ const Divination = () => {
             <StrawButton onClick={handleStrawSubmit}>好手氣！</StrawButton>
           </ButtonArea>
         </FormArea>
-        {strawData && <StrawResult strawData={strawData} />}
+        {strawData && <StrawResult strawData={strawData}/>}
       </Wrapper>
     </>
   );
@@ -200,6 +184,14 @@ export default Divination;
 const StrawResult = ({strawData}) => {
   const {jwtToken, isLogin, login} = useContext(AuthContext);
   const [hasClaim, setHasClaim] = useState(false);
+  const dummyRef = useRef()
+
+useEffect(() => { 
+  dummyRef.current.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  });
+ },[])
 
   const claim = async () => {
     console.log('here');
@@ -253,6 +245,7 @@ const StrawResult = ({strawData}) => {
           couponActivated={false}
           hasClaim={hasClaim}
         />
+        <div ref={dummyRef}></div>
       </CouponWrapper>
       <Products>
         {strawData.products.map((item, index) => {
