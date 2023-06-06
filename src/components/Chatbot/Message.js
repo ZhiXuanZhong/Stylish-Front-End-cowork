@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import chatbotIcon from './img/chatbot-icon.png';
 import {v4 as uuidv4} from 'uuid';
 
 const MessageWrapper = styled.div`
-  margin: 15px 20px;
+  margin: 5px 20px;
   display: flex;
   flex-direction: column;
   align-items: ${props => props.alignItems};
@@ -22,7 +21,7 @@ const ContentBoxWrapper = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 15px;
+  padding: 10px;
   line-height: 23px;
 `;
 
@@ -50,22 +49,5 @@ export function Message({messages}) {
         });
       })}
     </>
-
-    // <MessageWrapper alignItems={'flex-end'}>
-    //   <ChatbotAvatar src={chatbotIcon} />
-    //   {messages.texts.map((text, idx) => {
-    //     return (
-    //       <ContentBoxWrapper
-    //         key={idx}
-    //         backgroundColor={messages.style[idx].backgroundColor}
-    //         marginTop={idx === 0 ? '0px' : '12px'}
-    //         onClick={() => {
-    //           console.log(idx);
-    //         }}>
-    //         <Content key={idx}>{text}</Content>
-    //       </ContentBoxWrapper>
-    //     );
-    //   })}
-    // </MessageWrapper>
   );
 }

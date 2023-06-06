@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import chatbotIcon from './img/chatbot-icon.png';
 import userIcon from './img/user-icon.png';
 
 const Wrapper = styled.div`
@@ -51,8 +50,8 @@ export function Tag({setMessages}) {
                   draft.texts.push([tag.text]);
                   draft.style.push({
                     alignItems: 'flex-end',
-                    avatar: userIcon, // user avatar
-                    backgroundColor: '#1F75FE', // #1F75FE  #1877F2
+                    avatar: userIcon,
+                    backgroundColor: '#1F75FE',
                     color: '#ffffff',
                   });
                   return draft;
