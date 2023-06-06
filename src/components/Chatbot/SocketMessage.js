@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import styled from 'styled-components';
 import {v4 as uuidv4} from 'uuid';
 
@@ -35,43 +34,14 @@ const Content = styled.div`
   line-height: 23px;
 `;
 
-//
 
-const mockThreads = [
-  {
-    id: 111111,
-    from: 'dooi921@gmail.com',
-    to: 'admin',
-    message: 'Hello, How are you?',
-  },
-  {
-    id: 99999,
-    from: 'admin',
-    to: 'dooi921@gmail.com',
-    message: "I'm good thanks, and you?",
-  },
-  {
-    id: 222222,
-    from: 'erichere@gmail.com',
-    to: 'admin',
-    message: "Hi, I'm new here!",
-  },
-  {
-    id: 99999,
-    from: 'admin',
-    to: 'erichere@gmail.com',
-    message: 'Welcom, Eric! good to see you here',
-  },
-];
-
-export function SocketMessage({thread}) {
+export function SocketMessage({threads}) {
 
   return (
     <>
-      {/* temporary use mockThreads  */}
-      {mockThreads
-        .filter(thread => thread.from === 'dooi921@gmail.com' || (thread.from === 'admin' && thread.to === 'dooi921@gmail.com' ))
-        .map(thread => {
+      {threads
+        ?.filter(thread => thread.from === 'erichere@gmail.com' || (thread.from === 'admin' && thread.to === 'erichere@gmail.com' ))
+        ?.map(thread => {
         return (
           <MessageWrapper key={uuidv4()} $source={thread.from}>
             <ContentBoxWrapper $source={thread.from}>

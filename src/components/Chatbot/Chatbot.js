@@ -4,8 +4,10 @@ import inputBtn from './img/input-btn.png';
 import {Message} from './Message.js';
 import {SocketMessage} from './SocketMessage.js';
 import {Tag} from './Tag.js';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useImmer} from 'use-immer';
+import {io} from 'socket.io-client';
+const socket = io('http://54.253.197.166/');
 
 const Wrapper = styled.div``;
 
@@ -143,8 +145,7 @@ export function Chatbot() {
   //   '有什麼可以為您服務嗎？',
   // ]);
 
-  const [threads, setThreads] = useState();
-
+  const [threads, setThreads] = useImmer([]);
   const [messages, setMessages] = useImmer({
     characters: ['chatbot'],
     texts: [
@@ -171,6 +172,12 @@ export function Chatbot() {
     campaignImage: [undefined],
     campaignPath: [undefined],
   });
+
+  useEffect(() => {
+    socket.on('message', response => {
+      setThreads(draft => draft.concat(response.data));
+    });
+  }, []);
 
   return (
     <Wrapper>
@@ -203,7 +210,7 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
-            <SocketMessage messages={threads} />
+            <SocketMessage threads={threads} />
           </MessageBox>
         </MessageWrapper>
         <InputWrapper>
