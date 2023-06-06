@@ -61,7 +61,6 @@ const api = {
     return await response.json();
   },
   async getStraw(data) {
-    console.log(data);
     const response = await fetch(`${this.hostname}/front/divination`, {
       body: JSON.stringify(data),
       headers: new Headers({
@@ -80,7 +79,6 @@ const api = {
       }),
       method: 'POST',
     });
-    console.log(response.status);
 
     const res = {data: response.json(), status: response.status};
 
