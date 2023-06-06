@@ -84,6 +84,17 @@ const api = {
 
     return await res;
   },
+  async getBotMessage(type){
+    const response = await fetch(`${this.hostname}/front/chatbox`,{
+      body: JSON.stringify(type),
+      headers: new Headers({
+        'Content-Type' : 'application/json',
+      }),
+      method: 'POST'
+    })
+
+    console.log(await response.json())
+  }
 };
 
 export default api;
