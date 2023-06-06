@@ -77,7 +77,6 @@ const Divination = () => {
 
       const {data} = await api.getStraw(answer);
       setStrawData(data);
-      console.log(data);
     }
   };
 
@@ -194,7 +193,6 @@ useEffect(() => {
  },[])
 
   const claim = async () => {
-    console.log('here');
 
     try {
       const token = isLogin ? jwtToken : await login();
@@ -225,8 +223,6 @@ useEffect(() => {
       }
     } catch (err) {
       alert(err);
-    } finally {
-      console.log('finally');
     }
   };
 
