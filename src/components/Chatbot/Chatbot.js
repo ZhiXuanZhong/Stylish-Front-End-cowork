@@ -112,12 +112,8 @@ const MessageBox = styled.div`
 export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
-  // const [messages, setMessages] = useState([
-  //   '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
-  //   '有什麼可以為您服務嗎？',
-  // ]);
-
   const [messages, setMessages] = useImmer({
+    characters: ['chatbot'],
     texts: [
       [
         '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
@@ -126,12 +122,21 @@ export function Chatbot() {
     ],
     style: [
       {
-        alignItems: 'flex-start', // flex-end
-        avatar: chatbotIcon, // user avatar
-        backgroundColor: '#ffffff', // #1F75FE  #1877F2
+        alignItems: 'flex-start',
+        avatar: chatbotIcon,
+        backgroundColor: '#ffffff',
         color: '#000000',
       },
     ],
+    id: [undefined],
+    title: [undefined],
+    image: [undefined],
+    description: [undefined],
+    texture: [undefined],
+    place: [undefined],
+    campaignId: [undefined],
+    campaignImage: [undefined],
+    campaignPath: [undefined],
   });
 
   return (
@@ -165,6 +170,7 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
+            {/* if real chat comp */}
           </MessageBox>
         </MessageWrapper>
       </Chatroom>

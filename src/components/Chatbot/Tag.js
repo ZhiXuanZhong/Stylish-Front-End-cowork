@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import userIcon from './img/user-icon.png';
+import chatbotIcon from './img/chatbot-icon.png';
+import api from '../../utils/api';
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,7 +32,7 @@ const ChatbotTag = styled.div`
 `;
 
 const tags = [
-  {text: '連身裙推薦 👗', type: 'dress'},
+  {text: '洋裝推薦 👗', type: 'dress'},
   {text: '熱門推薦 🔥', type: 'hots'},
   {text: '牛仔褲推薦 👖', type: 'jeans'},
   {text: '優惠活動詢問 🎁', type: 'divination'},
@@ -38,6 +40,35 @@ const tags = [
 ];
 
 export function Tag({setMessages}) {
+  async function getBotMessage(tag) {
+    const {data} = await api.getBotMessage({
+      data: {
+        type: tag.type,
+      },
+    });
+
+    await setMessages(draft => {
+      draft.characters.push('chatbot');
+      draft.texts.push([undefined]);
+      draft.style.push({
+        alignItems: 'flex-start',
+        avatar: chatbotIcon,
+        backgroundColor: '#ffffff',
+        color: '#000000',
+      });
+      draft.id.push(data.id);
+      draft.title.push(data.title);
+      draft.description.push(data.description);
+      draft.image.push(data.main_image);
+      draft.texture.push(data.texture);
+      draft.place.push(data.place);
+      draft.campaignId.push(data.campaign);
+      draft.campaignImage.push(data.image);
+      draft.campaignPath.push(data.url);
+      return draft;
+    });
+  }
+
   return (
     <Wrapper>
       <TagWrapper>
@@ -47,6 +78,7 @@ export function Tag({setMessages}) {
               key={idx}
               onClick={() => {
                 setMessages(draft => {
+                  draft.characters.push('user');
                   draft.texts.push([tag.text]);
                   draft.style.push({
                     alignItems: 'flex-end',
@@ -54,8 +86,19 @@ export function Tag({setMessages}) {
                     backgroundColor: '#1F75FE',
                     color: '#ffffff',
                   });
+                  draft.id.push(undefined);
+                  draft.title.push(undefined);
+                  draft.image.push(undefined);
+                  draft.description.push(undefined);
+                  draft.texture.push(undefined);
+                  draft.place.push(undefined);
+                  draft.campaignId.push(undefined);
+                  draft.campaignImage.push(undefined);
+                  draft.campaignPath.push(undefined);
                   return draft;
                 });
+
+                getBotMessage(tag);
               }}>
               {tag.text}
             </ChatbotTag>
