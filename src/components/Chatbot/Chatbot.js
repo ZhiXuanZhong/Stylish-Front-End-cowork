@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import chatbotIcon from './img/chatbot-icon.png';
+import inputBtn from './img/input-btn.png';
 import {Message} from './Message.js';
 import {Tag} from './Tag.js';
 import {useState} from 'react';
@@ -101,12 +102,36 @@ const MessageWrapper = styled.div`
   flex-direction: column;
   overflow-y: scroll;
   position: relative;
-  height: 460px;
+  height: 430px;
 `;
 
 const MessageBox = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const InputWrapper = styled.div`
+  width: 100%;
+  height: 40px;
+  position: absolute;
+  bottom: 0;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 0px 0px 0px 24px;
+  border: none;
+`;
+
+const InputButton = styled.img`
+  width: 27px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-right: 8px;
+  transform: translateY(-50%);
 `;
 
 export function Chatbot() {
@@ -116,7 +141,7 @@ export function Chatbot() {
     characters: ['chatbot'],
     texts: [
       [
-        '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
+        '您好～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
         '有什麼可以為您服務嗎？',
       ],
     ],
@@ -170,9 +195,17 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
-            {/* if real chat comp */}
           </MessageBox>
         </MessageWrapper>
+        <InputWrapper>
+          <Input placeholder="    輸入訊息" />
+          <InputButton
+            src={inputBtn}
+            onClick={() => {
+              console.log(123);
+            }}
+          />
+        </InputWrapper>
       </Chatroom>
     </Wrapper>
   );
