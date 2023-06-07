@@ -29,6 +29,7 @@ const ChatbotTag = styled.div`
   color: #7092aa;
   background-color: #ffffff;
   padding: 8px;
+  cursor: pointer;
 `;
 
 const tags = [
