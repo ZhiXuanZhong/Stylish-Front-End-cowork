@@ -73,35 +73,8 @@ const Button = styled.button`
   border-radius: 3px;
   outline: none;
   color: #fff;
+  cursor: pointer;
 `;
-
-const data = [
-  {
-    from: 'AAA', // or user AAA
-    to: 'admin', //
-    message: 'Welcom1',
-  },
-  {
-    from: 'admin',
-    to: 'AAA', // user's id AAA
-    message: 'Welcom2',
-  },
-  {
-    from: 'admin', // or user
-    to: 'AAA', //
-    message: 'Welcom3',
-  },
-  {
-    from: 'AAA', // or user
-    to: 'admin', //
-    message: 'Welcom4',
-  },
-  {
-    from: 'BBB', // or user
-    to: 'admin', //
-    message: 'Welcom5',
-  },
-];
 
 function Backstage() {
   const [socketData, setSocketData] = useImmer([]);
@@ -127,7 +100,6 @@ function Backstage() {
 
     socket.emit('message', data);
     inputRef.current.value = '';
-    // setSocketData(draft => draft.concat(data));
   };
 
   useEffect(() => {
@@ -166,7 +138,9 @@ function Backstage() {
         />
         <Button
           onClick={() => {
-            handleSend(inputRef.current.value);
+            if (inputRef.current.value.trim() !== '') {
+              handleSend(inputRef.current.value);
+            }
           }}>
           Send
         </Button>
