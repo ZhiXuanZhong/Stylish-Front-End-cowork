@@ -54,7 +54,7 @@ const InfoWrapper = styled.div`
 `;
 
 const GoDetail = styled.div`
-  display: ${props => props.display};
+  display: flex;
   justify-content: flex-end;
   padding: 8px;
 `;
@@ -104,11 +104,13 @@ export function Message({messages}) {
                       </pre>
                     </InfoWrapper>
                   </Description>
-                  <Link
-                    to={`/products/${messages.id[idx]}`}
-                    style={{textDecoration: 'none'}}>
-                    <GoDetail>{'查看詳情'}</GoDetail>
-                  </Link>
+                  <GoDetail>
+                    <Link
+                      to={`/products/${messages.id[idx]}`}
+                      style={{textDecoration: 'none'}}>
+                      {'查看詳情'}
+                    </Link>
+                  </GoDetail>
                 </Content>
 
                 <Content
