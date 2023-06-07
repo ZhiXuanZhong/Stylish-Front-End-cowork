@@ -4,10 +4,10 @@ import inputBtn from './img/input-btn.png';
 import {Message} from './Message.js';
 import {SocketMessage} from './SocketMessage.js';
 import {Tag} from './Tag.js';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {useImmer} from 'use-immer';
 import {io} from 'socket.io-client';
-const socket = io('https://54.253.197.166/');
+const socket = io('https://emmalinstudio.com/');
 
 const Wrapper = styled.div``;
 
@@ -146,6 +146,7 @@ export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
 
+  const inputRef = useRef();
   const [threads, setThreads] = useImmer([]);
   const [messages, setMessages] = useImmer({
     characters: ['chatbot'],
@@ -173,6 +174,17 @@ export function Chatbot() {
     campaignImage: [undefined],
     campaignPath: [undefined],
   });
+
+  const handleSend = message => {
+    const data = {
+      from: socket.id,
+      to: 'admin',
+      message,
+    };
+
+    socket.emit('message', data);
+    inputRef.current.value = '';
+  };
 
   useEffect(() => {
     socket.on('message', response => {
@@ -211,15 +223,15 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
-            <SocketMessage threads={threads} />
+            <SocketMessage threads={threads} socketId={socket.id}/>
           </MessageBox>
         </MessageWrapper>
         <InputWrapper>
-          <Input placeholder="    輸入訊息" />
+          <Input ref={inputRef} placeholder="    輸入訊息" />
           <InputButton
             src={inputBtn}
             onClick={() => {
-              console.log(123);
+              handleSend(inputRef.current.value);
             }}
           />
         </InputWrapper>
