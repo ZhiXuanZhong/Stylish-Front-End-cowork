@@ -7,7 +7,7 @@ import {Tag} from './Tag.js';
 import {useState, useEffect} from 'react';
 import {useImmer} from 'use-immer';
 import {io} from 'socket.io-client';
-const socket = io('http://54.253.197.166/');
+const socket = io('https://54.253.197.166/');
 
 const Wrapper = styled.div``;
 
@@ -125,7 +125,11 @@ const Input = styled.input`
   height: 100%;
   position: relative;
   border-radius: 0px 0px 0px 24px;
+  padding: 0 47px 5px 14px;
   border: none;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const InputButton = styled.img`
@@ -135,15 +139,12 @@ const InputButton = styled.img`
   top: 50%;
   margin-right: 8px;
   transform: translateY(-50%);
+  cursor: pointer;
 `;
 
 export function Chatbot() {
   const [chatBtnShow, setChatBtnShow] = useState(true);
   const [chatRoomShow, setChatRoomShow] = useState(false);
-  // const [messages, setMessages] = useState([
-  //   '早安～ 我是你的購物小幫手，同時也是一個精通時尚的機器人喔！🤖',
-  //   '有什麼可以為您服務嗎？',
-  // ]);
 
   const [threads, setThreads] = useImmer([]);
   const [messages, setMessages] = useImmer({
