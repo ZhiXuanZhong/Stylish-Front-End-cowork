@@ -147,7 +147,7 @@ export function Chatbot() {
   const [chatRoomShow, setChatRoomShow] = useState(false);
 
   const inputRef = useRef();
-  const dummyRef = useRef()
+  const dummyRef = useRef();
   const [threads, setThreads] = useImmer([]);
   const [messages, setMessages] = useImmer({
     characters: ['chatbot'],
@@ -189,16 +189,15 @@ export function Chatbot() {
   useEffect(() => {
     socket.on('message', response => {
       setThreads(draft => draft.concat(response.data));
-
     });
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     dummyRef.current.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     });
-  },[threads])
+  }, [threads]);
 
   return (
     <Wrapper>
@@ -231,8 +230,9 @@ export function Chatbot() {
           <MessageBox>
             <Message messages={messages} />
             <Tag setMessages={setMessages} />
-            <SocketMessage threads={threads} socketId={socket.id}>
-            </SocketMessage>
+            <SocketMessage
+              threads={threads}
+              socketId={socket.id}></SocketMessage>
             <div ref={dummyRef}></div>
           </MessageBox>
         </MessageWrapper>
@@ -241,7 +241,9 @@ export function Chatbot() {
           <InputButton
             src={inputBtn}
             onClick={() => {
-              handleSend(inputRef.current.value);
+              if (inputRef.current.value.trim() !== '') {
+                handleSend(inputRef.current.value);
+              }
             }}
           />
         </InputWrapper>
