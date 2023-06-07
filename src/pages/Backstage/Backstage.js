@@ -127,7 +127,7 @@ function Backstage() {
 
     socket.emit('message', data);
     inputRef.current.value = '';
-    setSocketData(draft => draft.concat(data));
+    // setSocketData(draft => draft.concat(data));
   };
 
   useEffect(() => {
