@@ -7,6 +7,9 @@ import 'react-calendar/dist/Calendar.css';
 import {Coupon} from '../../components/Coupon/Coupon';
 import {AuthContext} from '../../context/authContext';
 import draw from '../Home/draw.gif';
+import congrat from '../Divination/congrat.json'
+import Lottie from "lottie-react";
+
 
 import api from '../../utils/api';
 
@@ -40,6 +43,8 @@ const Divination = () => {
   const [selectedColor, setSelectColor] = useState(colors);
   const [zodiac, setZodiac] = useState();
   const [strawData, setStrawData] = useState();
+  const [isclicked, setIsClicked] = useState(false);
+  const lottieRef = useRef()
 
   const handlePickColor = index => {
     const nowIndex = selectedColor.map(e => e.selected).indexOf(true);
@@ -76,7 +81,14 @@ const Divination = () => {
       };
 
       const {data} = await api.getStraw(answer);
+      setIsClicked(true);
+      lottieRef.current.play()
       setStrawData(data);
+
+      setTimeout(() => {
+        setIsClicked(false)        
+      }, 1200);
+
     }
   };
 
@@ -131,6 +143,7 @@ const Divination = () => {
 
   return (
     <>
+        {/* <Lottie lottieRef={lottieRef} animationData={congrat} loop={false} autoplay={false}/> */}
       <Wrapper>
         <CampaignTitle>抽出好運勢</CampaignTitle>
         <LuckyDraw src={draw} />
@@ -170,6 +183,9 @@ const Divination = () => {
           </ColorsBlock>
           <ButtonArea>
             <StrawButton onClick={handleStrawSubmit}>好手氣！</StrawButton>
+            <Congrat $isclicked={isclicked}>
+              <Lottie lottieRef={lottieRef} animationData={congrat} loop={false} autoplay={false}/>
+            </Congrat>
           </ButtonArea>
         </FormArea>
         {strawData && <StrawResult strawData={strawData}/>}
@@ -258,6 +274,11 @@ useEffect(() => {
     </>
   );
 };
+
+const Congrat = styled.div`
+${ props => props.$isclicked ? 'display: block;' : 'display: none;'}
+position: absolute;
+`
 
 const DatePickerWrapperStyles = createGlobalStyle`
 .react-date-picker__wrapper {
