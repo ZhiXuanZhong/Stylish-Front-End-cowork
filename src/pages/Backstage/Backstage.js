@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import {useState} from 'react';
 import {useImmer} from 'use-immer';
 import Message from './Message';
+import {io} from 'socket.io-client';
+const socket = io('https://54.253.197.166/');
 
 const Wrapper = styled.div`
   display: flex;
@@ -101,7 +103,7 @@ const data = [
 ];
 
 function Backstage() {
-  const [socketData, setSocketData] = useImmer(data);
+  const [socketData, setSocketData] = useImmer([]);
   const [currUser, setCurrUser] = useState();
 
   const getUniqueUser = () => {
@@ -114,9 +116,11 @@ function Backstage() {
     ];
   };
 
-  // const getUserChat = user => {
-  //   return socketData.filter(obj => obj.from === user || obj.to === user);
-  // };
+  // useEffect(() => {
+  //   socket.on('message', response => {
+  //     setSocketData(draft => draft.concat(response.data));
+  //   });
+  // }, []);
 
   return (
     <Wrapper>
