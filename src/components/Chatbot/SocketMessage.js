@@ -35,12 +35,12 @@ const Content = styled.div`
 `;
 
 
-export function SocketMessage({threads}) {
+export function SocketMessage({threads, socketId}) {
 
   return (
     <>
       {threads
-        ?.filter(thread => thread.from === 'erichere@gmail.com' || (thread.from === 'admin' && thread.to === 'erichere@gmail.com' ))
+        ?.filter(thread => thread.from === socketId || (thread.from === 'admin' && thread.to === socketId ))
         ?.map(thread => {
         return (
           <MessageWrapper key={uuidv4()} $source={thread.from}>
