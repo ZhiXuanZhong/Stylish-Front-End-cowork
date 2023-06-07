@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 
 import App from './App';
 import Checkout from './pages/Checkout/Checkout';
@@ -8,6 +8,7 @@ import ThankYou from './pages/ThankYou/ThankYou';
 import Product from './pages/Product/Product';
 import Profile from './pages/Profile/Profile';
 import Divination from './pages/Divination/Divination';
+import Backstage from './pages/Backstage/Backstage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -21,8 +22,9 @@ root.render(
         <Route path="thankyou" element={<ThankYou />} />
         <Route path="profile" element={<Profile />} />
         <Route path="divination" element={<Divination />} />
+        <Route path="backstage" element={<Backstage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
-  </BrowserRouter>
+  </BrowserRouter>,
 );
