@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import {useState} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {useImmer} from 'use-immer';
 import Message from './Message';
+import {io} from 'socket.io-client';
+const socket = io('https://emmalinstudio.com/');
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,6 +31,7 @@ const User = styled.li`
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid #d3d3d3;
+  cursor: pointer;
 `;
 
 const ChatRoom = styled.div`
@@ -101,8 +104,9 @@ const data = [
 ];
 
 function Backstage() {
-  const [socketData, setSocketData] = useImmer(data);
+  const [socketData, setSocketData] = useImmer([]);
   const [currUser, setCurrUser] = useState();
+  const inputRef = useRef();
 
   const getUniqueUser = () => {
     return [
@@ -114,9 +118,24 @@ function Backstage() {
     ];
   };
 
-  // const getUserChat = user => {
-  //   return socketData.filter(obj => obj.from === user || obj.to === user);
-  // };
+  const handleSend = message => {
+    const data = {
+      from: 'admin',
+      to: currUser,
+      message,
+    };
+
+    socket.emit('message', data);
+    inputRef.current.value = '';
+    setSocketData(draft => draft.concat(data));
+  };
+
+  useEffect(() => {
+    socket.on('message', response => {
+      console.log(response);
+      setSocketData(draft => draft.concat(response.data));
+    });
+  }, []);
 
   return (
     <Wrapper>
@@ -139,8 +158,18 @@ function Backstage() {
         </ChatRoom>
       </MessageWrapper>
       <Form>
-        <Input id="input" placeholder="請輸入訊息" autocomplete="off" />
-        <Button>Send</Button>
+        <Input
+          ref={inputRef}
+          id="input"
+          placeholder="請輸入訊息"
+          autocomplete="off"
+        />
+        <Button
+          onClick={() => {
+            handleSend(inputRef.current.value);
+          }}>
+          Send
+        </Button>
       </Form>
     </Wrapper>
   );
