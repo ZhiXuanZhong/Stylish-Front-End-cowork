@@ -54,7 +54,7 @@ const InfoWrapper = styled.div`
 `;
 
 const GoDetail = styled.div`
-  display: ${props => props.display};
+  display: 'flex';
   justify-content: flex-end;
   padding: 8px;
 `;
@@ -104,6 +104,7 @@ export function Message({messages}) {
                       </pre>
                     </InfoWrapper>
                   </Description>
+
                   <Link
                     to={`/products/${messages.id[idx]}`}
                     style={{textDecoration: 'none'}}>
