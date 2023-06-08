@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useRef, useState, useContext} from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import api from '../../utils/api';
 import tappay from '../../utils/tappay';
-import { AuthContext } from '../../context/authContext';
-import { CartContext } from '../../context/cartContext';
+import {AuthContext} from '../../context/authContext';
+import {CartContext} from '../../context/cartContext';
 import Button from '../../components/Button';
 import Cart from './Cart';
+import CouponSlide from './CouponSlide';
 
 const Wrapper = styled.div`
   margin: 0 auto;
@@ -138,7 +139,7 @@ const FormControl = styled.input`
   width: 574px;
   height: 30px;
   border-radius: 8px;
-  border: solid 1px ${({ invalid }) => invalid ? '#CB4042' : '#979797'};
+  border: solid 1px ${({invalid}) => (invalid ? '#CB4042' : '#979797')};
 
   @media screen and (max-width: 1279px) {
     margin-top: 10px;
@@ -210,6 +211,14 @@ const SubtotalPrice = styled(Price)`
 
 const ShippingPrice = styled(Price)`
   margin-top: 20px;
+
+  @media screen and (max-width: 1279px) {
+    margin-top: 20px;
+  }
+`;
+
+const DiscountPrice = styled(Price)`
+  margin-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #3f3a3a;
 
@@ -259,9 +268,9 @@ const formInputs = [
     key: 'name',
     text: '務必填寫完整收件人姓名，避免包裹無法順利簽收',
   },
-  { label: 'Email', key: 'email' },
-  { label: '手機', key: 'phone' },
-  { label: '地址', key: 'address' },
+  {label: 'Email', key: 'email'},
+  {label: '手機', key: 'phone'},
+  {label: '地址', key: 'address'},
 ];
 
 const timeOptions = [
@@ -295,31 +304,53 @@ function Checkout() {
   const cardCCVRef = useRef();
   const formRef = useRef();
 
-  const { jwtToken, isLogin, login } = useContext(AuthContext);
-  const { cartItems, setCartItems } = useContext(CartContext);
+  const {jwtToken, isLogin, login} = useContext(AuthContext);
+  const {cartItems, setCartItems} = useContext(CartContext);
+
+  const [discount, setDiscount] = useState(0);
+  const [couponId, setCouponId] = useState();
+
+  const [coupons, setCoupons] = useState([]);
+  async function queryCoupon() {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        const {data} = await api.queryCoupon(token);
+        setCoupons(data.coupon.filter(obj => obj.used === false));
+      }
+      if (!token) {
+        window.alert('請登入會員');
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
+    queryCoupon();
+
     const setupTappay = async () => {
       await tappay.setupSDK();
       tappay.setupCard(
         cardNumberRef.current,
         cardExpirationDateRef.current,
-        cardCCVRef.current
+        cardCCVRef.current,
       );
-    }
+    };
     setupTappay();
   }, []);
 
   const subtotal = cartItems.reduce(
     (prev, item) => prev + item.price * item.qty,
-    0
+    0,
   );
 
   const freight = 30;
 
   async function checkout() {
     try {
-      setLoading(true);      
+      setLoading(true);
 
       const token = isLogin ? jwtToken : await login();
 
@@ -332,46 +363,47 @@ function Checkout() {
         window.alert('尚未選購商品');
         return;
       }
-  
-      if (Object.values(recipient).some((value) => !value)) {
+
+      if (Object.values(recipient).some(value => !value)) {
         window.alert('請填寫完整訂購資料');
-        setInvalidFields(Object.keys(recipient).filter(key => !recipient[key]))
+        setInvalidFields(Object.keys(recipient).filter(key => !recipient[key]));
         formRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
+          behavior: 'smooth',
+          block: 'center',
         });
         return;
       }
-  
+
       if (!tappay.canGetPrime()) {
         window.alert('付款資料輸入有誤');
         return;
       }
-  
+
       const result = await tappay.getPrime();
       if (result.status !== 0) {
         window.alert('付款資料輸入有誤');
         return;
       }
-  
-      const { data } = await api.checkout(
+
+      const {data} = await api.checkout(
         {
           prime: result.card.prime,
           order: {
             shipping: 'delivery',
             payment: 'credit_card',
+            coupon_id: couponId,
             subtotal,
             freight,
-            total: subtotal + freight,
+            total: subtotal + freight - discount,
             recipient,
             list: cartItems,
           },
         },
-        token
+        token,
       );
       window.alert('付款成功');
       setCartItems([]);
-      navigate('/thankyou', { state: { orderNumber: data.number } });
+      navigate('/thankyou', {state: {orderNumber: data.number}});
     } catch (err) {
       console.log(err);
     } finally {
@@ -382,6 +414,12 @@ function Checkout() {
   return (
     <Wrapper>
       <Cart />
+      <CouponSlide
+        setDiscount={setDiscount}
+        setCouponId={setCouponId}
+        coupons={coupons}
+      />
+
       <GrayBlock>
         <Label>配送國家</Label>
         <Select>
@@ -400,13 +438,13 @@ function Checkout() {
       <form ref={formRef}>
         <FormFieldSet>
           <FormLegend>訂購資料</FormLegend>
-          {formInputs.map((input) => (
+          {formInputs.map(input => (
             <FormGroup key={input.key}>
               <FormLabel>{input.label}</FormLabel>
               <FormControl
                 value={recipient[input.key]}
-                onChange={(e) =>
-                  setRecipient({ ...recipient, [input.key]: e.target.value })
+                onChange={e =>
+                  setRecipient({...recipient, [input.key]: e.target.value})
                 }
                 invalid={invalidFields.includes(input.key)}
               />
@@ -415,14 +453,14 @@ function Checkout() {
           ))}
           <FormGroup>
             <FormLabel>配送時間</FormLabel>
-            {timeOptions.map((option) => (
+            {timeOptions.map(option => (
               <FormCheck key={option.value}>
                 <FormCheckInput
                   type="radio"
                   checked={recipient.time === option.value}
-                  onChange={(e) => {
+                  onChange={e => {
                     if (e.target.checked)
-                      setRecipient({ ...recipient, time: option.value });
+                      setRecipient({...recipient, time: option.value});
                   }}
                 />
                 <FormCheckLabel>{option.label}</FormCheckLabel>
@@ -456,12 +494,19 @@ function Checkout() {
         <Currency>NT.</Currency>
         <PriceValue>{freight}</PriceValue>
       </ShippingPrice>
+      <DiscountPrice>
+        <PriceName>折扣</PriceName>
+        <Currency>NT.</Currency>
+        <PriceValue>{discount}</PriceValue>
+      </DiscountPrice>
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight}</PriceValue>
+        <PriceValue>{subtotal + freight - discount}</PriceValue>
       </TotalPrice>
-      <Button loading={loading} onClick={checkout}>確認付款</Button>
+      <Button loading={loading} onClick={checkout}>
+        確認付款
+      </Button>
     </Wrapper>
   );
 }
